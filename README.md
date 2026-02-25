@@ -504,57 +504,65 @@ Deployment and monitoring (future)
 
 ## Extensions
 
-AI-DLC supports an extension system that lets you layer additional rules on top of the core workflow. Extensions are markdown files placed in the `aws-aidlc-rule-details/extensions/` directory and are automatically loaded and enforced when enabled during the Requirements Analysis phase.
+AI-DLC supports an extension system that lets you layer additional rules on top of the core workflow. Extensions are markdown files organized under `aws-aidlc-rule-details/extensions/` and are automatically loaded and enforced when enabled during the Requirements Analysis phase.
 
 ### How Extensions Work
 
-The workflow currently comes pre-seeded with certain baseline security extensions.
-You may add your own extensions. For example, you can add security extensions for specific compliance standards within the `extensions/security/compliance` folder hierarchy.
+Extensions are grouped by category (e.g., `security/`, `scalability/`, `accessibility/`). Each category can contain its own rules and any number of subcategories you define.
 
-While the extensions mechanism is generic, taking an example of security extensions,
-the process works as follows:
+Each extension should include an **Applicability Question** — a structured multiple-choice question that AI-DLC automatically presents during the Requirements Analysis phase. This lets the user decide whether to enable or skip that extension for the current project. For example, the built-in security extension includes:
 
-1. During the Inception phase, AI-DLC asks whether security extension rules should be enforced for the project.
-2. If enabled, the security baseline (`extensions/security/baseline/security-baseline.md`) is loaded as a set of mandatory, blocking constraints that apply across all AI-DLC phases.
-3. Compliance extensions in subdirectories under `extensions/security/compliance/` add framework-specific rules on top of the baseline.
-4. At each stage, the model verifies compliance with all loaded extension rules before allowing the stage to proceed.
+```markdown
+## Question: Security Extensions
+Should security extension rules be enforced for this project?
+
+A) Yes — enforce all SECURITY rules as blocking constraints
+B) No — skip all SECURITY rules
+X) Other (please describe)
+
+[Answer]:
+```
+
+When you create your own extensions, include a similar applicability question so users can opt in or out per project.
+
+Here's the general flow once an extension is enabled:
+
+1. During the Inception phase, AI-DLC presents the extension's applicability question.
+2. If enabled, the extension's rules are loaded as mandatory, blocking constraints that apply across all AI-DLC phases.
+3. At each stage, the model verifies compliance with all loaded extension rules before allowing the stage to proceed.
 
 ### Extension Directory Structure
+
+The workflow currently ships with a baseline security extension. 
 
 ```
 aws-aidlc-rule-details/
 └── extensions/
-    └── security/
-        ├── baseline/
-        │   └── security-baseline.md   # Baseline security rules 
-        ├── compliance/                # Placeholder folder hierarchy
+    └── security/                      # Extension category
+        └── baseline/
+        │   └── security-baseline.md   # Baseline security rules
+        ├── compliance/                # Proposed folder hierarchy
         │   ├── hipaa/                 # HIPAA compliance rules
         │   ├── pci-dss/               # PCI-DSS compliance rules
         │   └── soc2/                  # SOC 2 compliance rules
-        └── customer-specific/         # Your organization's custom rules
+        └── internal-policies/         # Your organization's custom rules
 ```
 
-### Adding Your Own Compliance Extensions
+### Adding Your Own Extensions
 
-To add a custom compliance framework:
+You can extend an existing category or create an entirely new one.
 
-1. Create a new directory under `extensions/security/compliance/`.
+To add rules to an existing category (e.g., security):
+
+1. Create a new directory under `extensions/security/` (e.g., `compliance/hipaa/`).
 2. Add one or more markdown files with your rules. Follow the same structure as `security-baseline.md`:
    - Give each rule a unique ID.
+   - Include an **Applicabality Question** described above
    - Include a **Rule** section describing the requirement.
    - Include a **Verification** section with concrete checks the model should evaluate.
 3. Rules are blocking by default — if verification criteria are not met, the stage cannot proceed until the finding is resolved.
 
-### Adding Organization-Specific Rules
-
-The `extensions/security/customer-specific/` directory is reserved for rules unique to your organization that don't fit a standard compliance framework. Use cases include:
-
-- Company-specific coding standards
-- Internal security policies
-- Industry-specific requirements not covered by standard frameworks
-- Custom threat model requirements
-
-Add markdown files here following the same rule/verification format, and they will be enforced alongside any other loaded extensions.
+To create a new extension category, add a new directory under `extensions/` (e.g., `extensions/performance/`) and place your rule markdown files inside it following the same format.
 
 ---
 
