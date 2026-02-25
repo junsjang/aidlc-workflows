@@ -9,6 +9,7 @@ AI-DLC is an intelligent software development workflow that adapts to your needs
 - [Usage](#usage)
 - [Three-Phase Adaptive Workflow](#three-phase-adaptive-workflow)
 - [Key Features](#key-features)
+- [Extensions](#extensions)
 - [Tenets](#tenets)
 - [Prerequisites](#prerequisites)
 - [Troubleshooting](#troubleshooting)
@@ -497,6 +498,63 @@ Deployment and monitoring (future)
 | **Risk-Based** | Complex changes get comprehensive treatment, simple changes stay efficient |
 | **Question-Driven** | Structured multiple-choice questions in files, not chat |
 | **Always in Control** | Review execution plans and approve each phase |
+| **Extensible** | Layer custom rules e.g. security, compliance, and organization-specific rules on top of the core workflow |
+
+---
+
+## Extensions
+
+AI-DLC supports an extension system that lets you layer additional rules on top of the core workflow. Extensions are markdown files placed in the `aws-aidlc-rule-details/extensions/` directory and are automatically loaded and enforced when enabled during the Requirements Analysis phase.
+
+### How Extensions Work
+
+The workflow currently comes pre-seeded with certain baseline security extensions.
+You may add your own extensions. For example, you can add security extensions for specific compliance standards within the `extensions/security/compliance` folder hierarchy.
+
+While the extensions mechanism is generic, taking an example of security extensions,
+the process works as follows:
+
+1. During the Inception phase, AI-DLC asks whether security extension rules should be enforced for the project.
+2. If enabled, the security baseline (`extensions/security/baseline/security-baseline.md`) is loaded as a set of mandatory, blocking constraints that apply across all AI-DLC phases.
+3. Compliance extensions in subdirectories under `extensions/security/compliance/` add framework-specific rules on top of the baseline.
+4. At each stage, the model verifies compliance with all loaded extension rules before allowing the stage to proceed.
+
+### Extension Directory Structure
+
+```
+aws-aidlc-rule-details/
+└── extensions/
+    └── security/
+        ├── baseline/
+        │   └── security-baseline.md   # Baseline security rules 
+        ├── compliance/                # Placeholder folder hierarchy
+        │   ├── hipaa/                 # HIPAA compliance rules
+        │   ├── pci-dss/               # PCI-DSS compliance rules
+        │   └── soc2/                  # SOC 2 compliance rules
+        └── customer-specific/         # Your organization's custom rules
+```
+
+### Adding Your Own Compliance Extensions
+
+To add a custom compliance framework:
+
+1. Create a new directory under `extensions/security/compliance/`.
+2. Add one or more markdown files with your rules. Follow the same structure as `security-baseline.md`:
+   - Give each rule a unique ID.
+   - Include a **Rule** section describing the requirement.
+   - Include a **Verification** section with concrete checks the model should evaluate.
+3. Rules are blocking by default — if verification criteria are not met, the stage cannot proceed until the finding is resolved.
+
+### Adding Organization-Specific Rules
+
+The `extensions/security/customer-specific/` directory is reserved for rules unique to your organization that don't fit a standard compliance framework. Use cases include:
+
+- Company-specific coding standards
+- Internal security policies
+- Industry-specific requirements not covered by standard frameworks
+- Custom threat model requirements
+
+Add markdown files here following the same rule/verification format, and they will be enforced alongside any other loaded extensions.
 
 ---
 
