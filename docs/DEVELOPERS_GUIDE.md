@@ -19,8 +19,15 @@ chmod +x codebuild_build.sh
 ### Basic Usage
 
 ```bash
-./codebuild_build.sh -i aws/codebuild/standard:5.0 -a ./.codebuild/ \
-  -l public.ecr.aws/codebuild/local-builds:$([ "$(arch)" = "arm64" ] && echo "aarch64" || echo "latest")
+# pull the current buildspec.yml out of the workflow
+cat .github/workflows/codebuild.yml \
+    | uvx yq -r '.jobs.build.steps[] | select(.id == "codebuild") | .with["buildspec-override"]' \
+    > buildspec.yml
+./codebuild_build.sh \
+  -i "public.ecr.aws/codebuild/amazonlinux-$([ "$(arch)" = "arm64" ] && echo "aarch64" || echo "x86_64")-standard:$([ "$(arch)" = "arm64" ] && echo "3.0" || echo "5.0")" \
+  -a "./.codebuild/artifacts/" \
+  -r "./.codebuild/reports/" \
+  -l "public.ecr.aws/codebuild/local-builds:$([ "$(arch)" = "arm64" ] && echo "aarch64" || echo "latest")"
 ```
 
 ### Overriding the Buildspec
