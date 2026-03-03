@@ -34,19 +34,16 @@ cat .github/workflows/codebuild.yml \
 
 ### All Script Options
 
-| Flag         | Required | Description                                                                                   |
-|--------------|----------|-----------------------------------------------------------------------------------------------|
-| `-i IMAGE`   | Yes      | Customer build container image (e.g. `aws/codebuild/standard:5.0`)                            |
-| `-a DIR`     | Yes      | Artifact output directory                                                                     |
-| `-b FILE`    | No       | Buildspec override file. Defaults to `buildspec.yml` in the source directory                  |
-| `-s DIR`     | No       | Source directory. First `-s` is the primary source;
-                            additional `-s` flags use `<sourceIdentifier>:<sourceLocation>` format for secondary sources. 
-                            Defaults to the current working directory                                                     |
-| `-l IMAGE`   | No       | Override the default local agent image                                                        |
-| `-r DIR`     | No       | Report output directory                                                                       |
-| `-c`         | No       | Use AWS configuration and credentials from your local host 
-                            (`~/.aws` and `AWS_*` environment variables)                                                  |
-| `-p PROFILE` | No       | AWS CLI profile to use (requires `-c`)                                                        |
-| `-e FILE`    | No       | File containing environment variables (`VAR=VAL` format, one per line)                        |
-| `-m`         | No       | Mount the source directory into the build container directly                                  |
-| `-d`         | No       | Run the build container in Docker privileged mode                                             |
+| Flag         | Required | Description                                                                                                                                                                                         |
+|--------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `-i IMAGE`   | Yes      | Customer build container image (e.g. `aws/codebuild/standard:5.0`)                                                                                                                                  |
+| `-a DIR`     | Yes      | Artifact output directory                                                                                                                                                                           |
+| `-b FILE`    | No       | Buildspec override file. Defaults to `buildspec.yml` in the source directory                                                                                                                        |
+| `-s DIR`     | No       | Source directory. First `-s` is the primary source; additional `-s` flags use `<sourceIdentifier>:<sourceLocation>` format for secondary sources. Defaults to the current working directory |
+| `-l IMAGE`   | No       | Override the default local agent image                                                                                                                                                              |
+| `-r DIR`     | No       | Report output directory                                                                                                                                                                             |
+| `-c`         | No       | Use AWS configuration and credentials from your local host (`~/.aws` and `AWS_*` environment variables)                                                                                             |
+| `-p PROFILE` | No       | AWS CLI profile to use (requires `-c`)                                                                                                                                                              |
+| `-e FILE`    | No       | File containing environment variables (`VAR=VAL` format, one per line)                                                                                                                              |
+| `-m`         | No       | Mount the source directory into the build container directly                                                                                                                                        |
+| `-d`         | No       | Run the build container in Docker privileged mode                                                                                                                                                   |
