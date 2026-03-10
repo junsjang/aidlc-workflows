@@ -77,36 +77,32 @@ jobs:
             version: 0.2
             env:
               variables:
-                TEST_ONE: "1"
+                GH_TOKEN: ${{ github.token }}
             phases:
               install:
                 commands:
-                  - echo "install ${TEST_ONE}" | tee --append ./codebuild.out
-                  - dnf install -y lshw || echo "dnf install failed"
+                  - touch ./codebuild.out
+                  - dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo || echo "dnf config-manager"
+                  - dnf install -y 'dnf-command(config-manager)' gh || echo "dnf install failed"
+                  - curl -LsSf https://astral.sh/uv/install.sh | sh && export PATH=$HOME/.local/bin:$PATH || "echo uv failed"
               pre_build:
                 commands:
-                  - echo "pre_build ${TEST_ONE}" | tee --append ./codebuild.out
-                  - echo "=== OS ==="
-                  - cat /etc/os-release
-                  - echo "=== Kernel ==="
-                  - uname -a
-                  - echo "=== CPU ==="
-                  - lscpu
-                  - echo "=== Memory ==="
-                  - free -h
-                  - echo "=== Kisk ==="
-                  - df -h
-                  - echo "=== Block Devices ==="
-                  - lsblk
-                  - echo "=== Hardward Summary ==="
-                  - lshw -short || echo "lshw failed"
+                  - echo "pre_build"
               build:
                 commands:
-                  - echo "build ${TEST_ONE}" | tee --append ./codebuild.out
-                  - ls -alR
+                  - DEFAULT_BRANCH=$(gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name')
+                  - CURRENT_BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null || echo "")
+                  - CURRENT_TAG=$(git describe --tags --exact-match 2>/dev/null || echo "")
+                  - IS_RELEASE=$([[ -n "$CURRENT_TAG" ]] && echo "true" || echo "false")
+                  - IS_PRE_RELEASE=$([[ "$CURRENT_BRANCH" == "$DEFAULT_BRANCH" ]] && echo "true" || echo "false")
+                  - IS_PRE_MERGE=$([[ -z "$CURRENT_TAG" && "$CURRENT_BRANCH" != "$DEFAULT_BRANCH" ]] && echo "true" || echo "false")
+                  - if [[ "$IS_RELEASE" == "true" ]]; then echo "This is a release"; fi;
+                  - if [[ "$IS_PRE_RELEASE" == "true" ]]; then echo "This is a pre-release"; fi;
+                  - if [[ "$IS_PRE_MERGE" == "true" ]]; then echo "This is a pre-merge"; fi;
+                  - aws bedrock-runtime invoke-model --model-id 'global.anthropic.claude-opus-4-6-v1' --content-type 'application/json' --accept 'application/json' --body fileb://<(echo '{"anthropic_version":"bedrock-2023-05-31","max_tokens":1024,"messages":[{"role":"user","content":"Hello"}]}') --region 'us-east-1' output.json;
+                  - cat output.json | jq >> ./codebuild.out
               post_build:
                 commands:
-                  - echo "post_build ${TEST_ONE}" | tee --append ./codebuild.out
                   - echo "Build completed with status $CODEBUILD_BUILD_SUCCEEDING"
                   - cat ./codebuild.out
             artifacts:
