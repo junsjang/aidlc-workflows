@@ -81,7 +81,8 @@ jobs:
             phases:
               install:
                 commands:
-                  - touch ./codebuild.out
+                  - mkdir -p .codebuild
+                  - touch ./.codebuild/codebuild.out
                   - dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo || echo "dnf config-manager"
                   - dnf install -y 'dnf-command(config-manager)' gh || echo "dnf install failed"
                   - curl -LsSf https://astral.sh/uv/install.sh | sh && export PATH=$HOME/.local/bin:$PATH || "echo uv failed"
@@ -99,12 +100,12 @@ jobs:
                   - if [[ "$IS_RELEASE" == "true" ]]; then echo "This is a release"; fi;
                   - if [[ "$IS_PRE_RELEASE" == "true" ]]; then echo "This is a pre-release"; fi;
                   - if [[ "$IS_PRE_MERGE" == "true" ]]; then echo "This is a pre-merge"; fi;
-                  - aws bedrock-runtime invoke-model --model-id 'global.anthropic.claude-opus-4-6-v1' --content-type 'application/json' --accept 'application/json' --body fileb://<(echo '{"anthropic_version":"bedrock-2023-05-31","max_tokens":1024,"messages":[{"role":"user","content":"Hello"}]}') --region 'us-east-1' output.json;
-                  - cat output.json | jq >> ./codebuild.out
+                  - aws bedrock-runtime invoke-model --model-id 'global.anthropic.claude-opus-4-6-v1' --content-type 'application/json' --accept 'application/json' --body fileb://<(echo '{"anthropic_version":"bedrock-2023-05-31","max_tokens":1024,"messages":[{"role":"user","content":"Hello"}]}') --region 'us-east-1' ./.codebuild/output.json;
+                  - cat ./.codebuild/output.json | jq >> ./.codebuild/codebuild.out
               post_build:
                 commands:
                   - echo "Build completed with status $CODEBUILD_BUILD_SUCCEEDING"
-                  - cat ./codebuild.out
+                  - cat ./.codebuild/codebuild.out
             artifacts:
               files:
                 - '**/codebuild.out'
