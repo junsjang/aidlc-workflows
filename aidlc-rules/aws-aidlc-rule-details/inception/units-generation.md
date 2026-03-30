@@ -10,11 +10,11 @@ This stage decomposes the system into manageable units of work through two integ
 **Terminology**: Use "Service" for independently deployable components, "Module" for logical groupings within a service, "Unit of Work" for planning context.
 
 ## Prerequisites
-- Context Assessment must be complete
-- Requirements Assessment recommended (provides functional scope)
-- Story Development recommended (stories map to units)
-- Application Design phase REQUIRED (determines components, methods, and services)
-- Execution plan must indicate Design phase should execute
+- Workspace Detection must be complete
+- Requirements Analysis recommended (provides functional scope)
+- User Stories recommended (stories map to units)
+- Application Design stage REQUIRED (determines components, methods, and services)
+- Execution plan must indicate Design stage should execute
 
 ---
 
@@ -35,21 +35,23 @@ This stage decomposes the system into manageable units of work through two integ
 - [ ] Ensure all stories are assigned to units
 
 ## Step 3: Generate Context-Appropriate Questions
-**DIRECTIVE**: Thoroughly analyze the requirements, stories, and application design to identify ALL areas where clarification would improve the system decomposition. Be proactive in asking questions to ensure comprehensive understanding of unit boundaries and responsibilities.
+**DIRECTIVE**: Thoroughly analyze the requirements, stories, and application design to identify ALL areas where clarification would improve unit decomposition quality. Be proactive in asking questions to ensure comprehensive coverage of decomposition concerns.
 
-**CRITICAL**: Default to asking questions when there is ANY ambiguity or missing detail that could affect decomposition quality. It's better to ask too many questions than to make incorrect assumptions.
+**CRITICAL**: Default to asking questions when there is ANY ambiguity or missing detail that could affect unit boundaries or decomposition quality. It's better to ask too many questions than to make incorrect assumptions about how the system should be decomposed.
+
+**MANDATORY**: Evaluate ALL of the following categories by asking targeted questions about each. For each category, determine applicability based on evidence from the requirements, stories, and application design -- do not skip categories without explicit justification:
 
 - EMBED questions using [Answer]: tag format
 - Focus on ANY ambiguities, missing information, or areas needing clarification
 - Generate questions wherever user input would improve decomposition decisions
-- **When in doubt, ask the question** - overconfidence leads to poor decomposition
+- **When in doubt, ask the question** - overconfidence leads to poor unit boundaries
 
-**Question categories to consider** (evaluate ALL categories):
-- **Story Grouping** - Ask about grouping strategy, cohesion criteria, and story dependencies
-- **Dependencies** - Ask about integration approach, communication patterns, and dependency direction between units
-- **Team Alignment** - Ask about team structure, ownership boundaries, and development workflow preferences
-- **Technical Considerations** - Ask about scalability and deployment requirements that may differ across units
-- **Business Domain** - Ask about domain boundaries, bounded contexts, and shared domain concepts
+**Question categories to evaluate** (consider ALL categories):
+- **Story Grouping** - Ask about grouping strategy, story affinity, and logical clustering approaches
+- **Dependencies** - Ask about integration approach, shared resources, and inter-unit communication patterns
+- **Team Alignment** - Ask about team structure, ownership boundaries, and collaboration models
+- **Technical Considerations** - Ask about scalability/deployment requirements that may differ across units
+- **Business Domain** - Ask about domain boundaries, bounded contexts, and business capability alignment
 - **Code Organization (Greenfield multi-unit only)** - Ask about deployment model and directory structure preferences
 
 ## Step 4: Store UOW Plan
