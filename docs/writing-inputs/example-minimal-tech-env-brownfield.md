@@ -9,7 +9,7 @@
 ## Existing Stack (must be preserved)
 
 | Layer | Current Technology | Version | Notes |
-|-------|-------------------|---------|-------|
+| ------- | ------------------- | --------- | ------- |
 | Language | TypeScript | 5.x | Strict mode. Do not introduce JavaScript files. |
 | Runtime | Node.js | 20.x LTS | |
 | API framework | Express | 4.x | All existing services use Express. Do not introduce Fastify or Koa. |
@@ -45,7 +45,7 @@
 ## What to Remove / Not Introduce
 
 | Prohibited | Reason | Use Instead |
-|-----------|--------|-------------|
+| ----------- | -------- | ------------- |
 | ORMs (TypeORM, Prisma, Sequelize) | Existing codebase uses raw SQL with typed helpers. Introducing an ORM creates inconsistency. | node-postgres with typed query functions, matching existing pattern |
 | Axios | Project uses native fetch (Node 20 built-in). | fetch |
 | Any new CSS framework | Existing frontend uses Tailwind CSS. | Tailwind CSS, existing design system components |

@@ -16,7 +16,7 @@ The agents repeat this handoff loop through all Inception and Construction phase
 **Inception Phase** — what to build and why:
 
 | Stage | Condition |
-|---|---|
+| --- | --- |
 | Workspace Detection | Always |
 | Reverse Engineering | Brownfield only |
 | Requirements Analysis | Always |
@@ -28,7 +28,7 @@ The agents repeat this handoff loop through all Inception and Construction phase
 **Construction Phase** — how to build it (runs per unit of work):
 
 | Stage | Condition |
-|---|---|
+| --- | --- |
 | Functional Design | Conditional |
 | NFR Requirements | Conditional |
 | NFR Design | Conditional |
@@ -109,7 +109,7 @@ uv run aidlc-runner --vision ./my-project-vision.md \
 ### CLI Reference
 
 | Flag | Required | Default | Description |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `--vision PATH` | Yes | — | Path to the vision/constraints markdown file |
 | `--tech-env PATH` | No | — | Path to the technical environment markdown file |
 | `--config PATH` | No | Built-in default | Path to a YAML configuration file |
@@ -166,7 +166,7 @@ The built-in defaults match the file above. The default config ships at `aidlc-r
 
 Each invocation creates a timestamped run folder under the output directory:
 
-```
+```text
 runs/
 └── 20260212T143022-a1b2c3d4e5f6.../
     ├── run-meta.yaml              # Metadata: timestamps, config snapshot, status
@@ -208,7 +208,7 @@ uv run ruff check . && uv run ruff format .
 
 ### Project Structure
 
-```
+```text
 aidlc-runner/
 ├── config/
 │   └── default.yaml                # Default configuration

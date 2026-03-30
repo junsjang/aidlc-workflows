@@ -18,21 +18,21 @@
 ### Required Languages
 
 | Language | Version | Purpose | Rationale |
-|----------|---------|---------|-----------|
+| ---------- | --------- | --------- | ----------- |
 | Python | 3.12+ | API service, math engine, Lambda handlers, CDK infrastructure | Team's primary language. Rich math ecosystem (mpmath, numpy, scipy). uv provides fast, reliable dependency management. |
 | HTML/CSS/JS | ES2022+ | Documentation portal (static site) | Minimal frontend for API docs. No framework needed; static generation with Jinja2 templates. |
 
 ### Permitted Languages
 
 | Language | Conditions for Use |
-|----------|-------------------|
+| ---------- | ------------------- |
 | Rust | Approved for performance-critical math functions (e.g., expression parser) if Python performance is insufficient. Requires profiling evidence before adoption. Exposed to Python via PyO3/maturin. |
 | TypeScript | Approved for CDK infrastructure if the team prefers CDK in TypeScript over Python CDK. Decision must be made before construction begins, not mid-project. |
 
 ### Prohibited Languages
 
 | Language | Reason | Use Instead |
-|----------|--------|-------------|
+| ---------- | -------- | ------------- |
 | Java | No team expertise. Adds operational complexity (JVM cold starts in Lambda). | Python |
 | Go | No team expertise. Python covers all current requirements. | Python |
 | C/C++ | Maintenance burden for native extensions. | Rust via PyO3 if native performance is needed |
@@ -47,7 +47,7 @@ uv is the **sole package and environment management tool** for this project. Do 
 
 ### uv Usage Standards
 
-```
+```bash
 # Project initialization (already done; do not re-run)
 uv init calcengine
 cd calcengine
@@ -79,7 +79,7 @@ uv sync --dev                       # Include dev dependencies
 ### Dependency File Standards
 
 | File | Purpose | Committed to Git |
-|------|---------|-----------------|
+| ------ | --------- | ----------------- |
 | `pyproject.toml` | Project metadata, dependency declarations, tool configuration | Yes |
 | `uv.lock` | Deterministic lockfile with exact resolved versions | Yes |
 | `.python-version` | Pin the Python version for the project (e.g., `3.12`) | Yes |
@@ -142,7 +142,7 @@ show_missing = true
 ### Required Frameworks
 
 | Framework/Library | Version | Domain | Rationale |
-|-------------------|---------|--------|-----------|
+| ------------------- | --------- | -------- | ----------- |
 | FastAPI | 0.115+ | REST API framework | Async support, automatic OpenAPI spec generation, Pydantic validation, strong Python typing integration. |
 | Pydantic | 2.x | Request/response validation, settings management | Type-safe data models, JSON serialization, integral to FastAPI. |
 | uvicorn | 0.30+ | ASGI server | Standard production server for FastAPI. Used locally and in Lambda via Mangum. |
@@ -158,7 +158,7 @@ show_missing = true
 Use these when their capability is needed. Do not add them preemptively.
 
 | Library | Purpose | Use When |
-|---------|---------|----------|
+| --------- | --------- | ---------- |
 | mpmath | Arbitrary-precision arithmetic | Phase 2: when arbitrary-precision mode is implemented. Not needed for MVP (IEEE 754 double is sufficient). |
 | numpy | Array operations, linear algebra | Phase 2: when matrix/vector operations are implemented. Do not use for basic arithmetic. |
 | scipy | Statistical distributions, numerical integration | Phase 2+: when advanced statistics and calculus are implemented. |
@@ -172,7 +172,7 @@ Use these when their capability is needed. Do not add them preemptively.
 ### Prohibited Libraries
 
 | Library | Reason | Alternative |
-|---------|--------|-------------|
+| --------- | -------- | ------------- |
 | Flask | Project uses FastAPI. Do not mix web frameworks. | FastAPI |
 | Django | Excessive for an API service. ORM not needed. | FastAPI + direct DynamoDB access |
 | requests | Synchronous-only. Blocks the async event loop in FastAPI. | httpx |
@@ -205,7 +205,7 @@ To add a library not on the required or preferred lists:
 ### Service Allow List
 
 | Service | Approved Use Cases | Constraints |
-|---------|-------------------|-------------|
+| --------- | ------------------- | ------------- |
 | AWS Lambda | API request handlers, math computation | Python 3.12 runtime. Max 256MB memory for MVP (increase if profiling shows need). 30-second timeout. |
 | Amazon API Gateway (HTTP API) | Public REST API endpoint | HTTP API type (not REST API type). Custom domain with TLS. Usage plans for rate limiting. |
 | Amazon DynamoDB | API key storage, usage metering, rate limit counters | On-demand capacity mode. Single-table design. TTL for rate limit windows. |
@@ -223,7 +223,7 @@ To add a library not on the required or preferred lists:
 ### Service Disallow List
 
 | Service | Reason | Alternative |
-|---------|--------|-------------|
+| --------- | -------- | ------------- |
 | Amazon EC2 | Operational overhead. Serverless model preferred. | Lambda for compute. |
 | Amazon ECS / Fargate | Over-engineering for MVP request/response workload. | Lambda. Re-evaluate if cold starts become a problem. |
 | Amazon RDS / Aurora | Relational database not needed. API key and usage data fits DynamoDB. | DynamoDB. |
@@ -253,7 +253,7 @@ To use a service not on the allow list:
 CalcEngine is a single Python package with internal modules (arithmetic, trigonometry, statistics, etc.), exposed through a single FastAPI application, deployed to AWS Lambda behind API Gateway. This is not a microservice architecture.
 
 | Decision | Choice | Rationale |
-|----------|--------|-----------|
+| ---------- | -------- | ----------- |
 | Architecture style | Modular monolith | Small team (4 people), single domain, no independent scaling requirements per module in MVP. |
 | Deployment model | Single Lambda function serving all API routes via Mangum | Simplicity. One deployment artifact. Cold start amortized across all endpoints. |
 | Module boundaries | Python packages within `src/calcengine/` | Clean internal boundaries without the operational cost of separate services. Can extract to separate Lambdas later if specific endpoints need different memory/timeout. |
@@ -307,7 +307,7 @@ CalcEngine is a single Python package with internal modules (arithmetic, trigono
 **Error Codes (MVP):**
 
 | Code | HTTP Status | Meaning |
-|------|------------|---------|
+| ------ | ------------ | --------- |
 | `PARSE_ERROR` | 400 | Expression could not be parsed. Malformed syntax. |
 | `DOMAIN_ERROR` | 422 | Mathematically undefined (log(-1), sqrt(-1), division by zero). |
 | `OVERFLOW_ERROR` | 422 | Result exceeds representable range. |
@@ -356,7 +356,7 @@ logger.error(
 **Required log fields for every API request:**
 
 | Field | Description |
-|-------|-------------|
+| ------- | ------------- |
 | `request_id` | Unique ID per request (from API Gateway or generated) |
 | `api_key_id` | Hashed API key identifier (never log the raw key) |
 | `endpoint` | API path called |
@@ -412,7 +412,7 @@ logger.error(
 #### A01:2021 - Broken Access Control
 
 | Control | CalcEngine Implementation |
-|---------|--------------------------|
+| --------- | -------------------------- |
 | Authorization enforcement | API key validated in FastAPI middleware (`api/middleware/auth.py`) on every request before the route handler executes. No endpoint is accessible without a valid key. |
 | Default deny | API Gateway rejects requests without an `Authorization` header at the gateway level (401). Lambda handler rejects requests with invalid or revoked keys (401). |
 | Resource ownership | Each API key is tied to a Cognito account. Developers can only list, rotate, and revoke their own keys. DynamoDB queries are scoped to the authenticated user's partition key. |
@@ -423,7 +423,7 @@ logger.error(
 #### A02:2021 - Cryptographic Failures
 
 | Control | CalcEngine Implementation |
-|---------|--------------------------|
+| --------- | -------------------------- |
 | Data in transit | TLS 1.2+ enforced on API Gateway custom domain and CloudFront. HTTP endpoints do not exist. API Gateway configured with `SecurityPolicy: TLS_1_2`. |
 | Data at rest | DynamoDB encrypted with AWS-managed KMS key. S3 buckets encrypted with SSE-S3. CloudWatch logs encrypted with service-managed keys. |
 | Password/credential storage | Developer portal passwords hashed with bcrypt (Cognito-managed). API keys stored as bcrypt hashes in DynamoDB. Raw API keys are returned exactly once at creation time and never stored or logged. |
@@ -433,7 +433,7 @@ logger.error(
 #### A03:2021 - Injection
 
 | Control | CalcEngine Implementation |
-|---------|--------------------------|
+| --------- | -------------------------- |
 | Expression injection | The expression parser builds an AST from a strict grammar. It does **not** use `eval()`, `exec()`, `compile()`, or any Python code execution mechanism. Only recognized tokens (numbers, operators, parentheses, whitelisted function names) are accepted. Unrecognized tokens cause a `PARSE_ERROR` (400). |
 | Character allowlist | Expression input restricted to: digits, decimal point, arithmetic operators (`+ - * / ^ %`), parentheses, comma, whitespace, and a fixed set of function names (`sin`, `cos`, `tan`, `log`, `sqrt`, etc.). All other characters are rejected before parsing. |
 | NoSQL injection | DynamoDB queries use the boto3 SDK with parameterized key conditions. No string concatenation of user input into query expressions. Partition keys and sort keys are set programmatically, never interpolated from request bodies. |
@@ -443,7 +443,7 @@ logger.error(
 #### A04:2021 - Insecure Design
 
 | Control | CalcEngine Implementation |
-|---------|--------------------------|
+| --------- | -------------------------- |
 | Threat modeling | Threat model created during AIDLC NFR Requirements stage. Reviewed when new endpoints or integration points are added. Primary threats: expression injection, resource exhaustion, API key abuse. |
 | Defense in depth | Validation at three layers: (1) API Gateway request validation, (2) Pydantic model validation in FastAPI, (3) domain validation in engine functions. Each layer rejects independently. |
 | Business logic limits | Expression length capped at 4,096 characters. Parser recursion depth capped at 100 levels. Maximum array size for statistics endpoints: 10,000 elements. These limits prevent resource exhaustion without affecting legitimate use. |
@@ -452,7 +452,7 @@ logger.error(
 #### A05:2021 - Security Misconfiguration
 
 | Control | CalcEngine Implementation |
-|---------|--------------------------|
+| --------- | -------------------------- |
 | Infrastructure as Code | All infrastructure defined in AWS CDK (Python). No manual console changes. CDK diff reviewed in pull requests before deploy. |
 | Default credentials | No default API keys, admin accounts, or hardcoded passwords in any environment. Cognito user pool requires email verification. |
 | Error messages | Production error responses return the CalcEngine error code, a user-friendly message, and a documentation URL. They never expose Python tracebacks, Lambda ARNs, DynamoDB table names, or internal file paths. FastAPI `debug=False` in production. |
@@ -463,7 +463,7 @@ logger.error(
 #### A06:2021 - Vulnerable and Outdated Components
 
 | Control | CalcEngine Implementation |
-|---------|--------------------------|
+| --------- | -------------------------- |
 | Dependency scanning | GitHub Dependabot enabled. Scans `pyproject.toml` and `uv.lock` for known vulnerabilities. Alerts create GitHub issues automatically. |
 | Patch SLA | Critical/High CVEs: patched within 7 days. Medium: 30 days. Low: evaluated quarterly. |
 | License compliance | Allowed: MIT, Apache 2.0, BSD, PSF, ISC. Prohibited: GPL, LGPL, AGPL, SSPL, proprietary. Checked with `uv tree` before adding dependencies. |
@@ -473,7 +473,7 @@ logger.error(
 #### A07:2021 - Identification and Authentication Failures
 
 | Control | CalcEngine Implementation |
-|---------|--------------------------|
+| --------- | -------------------------- |
 | API key hashing | API keys are 32-character cryptographically random strings (via `secrets.token_urlsafe`). Stored as bcrypt hashes. Lookup uses a key prefix (first 8 chars, stored in plaintext) to find the record, then bcrypt verify confirms the full key. |
 | Brute force protection | API Gateway throttling: 100 requests/second per IP across all endpoints. Failed authentication attempts (invalid key) logged with `api_key_prefix` and source IP. After 50 failed auth attempts from a single IP in 5 minutes, temporary IP block via WAF rule. |
 | Developer portal auth | Cognito enforces: minimum 12-character password, email verification required, account lockout after 5 failed login attempts. |
@@ -484,7 +484,7 @@ logger.error(
 #### A08:2021 - Software and Data Integrity Failures
 
 | Control | CalcEngine Implementation |
-|---------|--------------------------|
+| --------- | -------------------------- |
 | CI/CD pipeline security | GitHub Actions. `main` branch protected: requires PR, at least 1 review, all CI checks passing. No direct pushes to `main`. Deploy workflow triggered only on merge to `main`. |
 | Dependency integrity | `uv.lock` contains hashes for all dependencies. `uv sync --locked` verifies hashes on install. Lockfile changes in PRs are reviewed explicitly. |
 | Deployment artifact integrity | Lambda deployment package built in CI from a clean `uv sync --locked` install. No local builds deployed to production. CDK deploy runs only from the CI pipeline, not from developer machines. |
@@ -493,7 +493,7 @@ logger.error(
 #### A09:2021 - Security Logging and Monitoring Failures
 
 | Control | CalcEngine Implementation |
-|---------|--------------------------|
+| --------- | -------------------------- |
 | Security events logged | All events below are logged as structured JSON to CloudWatch: authentication failures (invalid/expired/revoked key), rate limit exceeded (429), input validation failures (400), authorization anomalies, and all 5xx errors. |
 | Log protection | CloudWatch logs are retained for 30 days. Log group resource policy prevents deletion by Lambda execution role. CloudTrail logs management events to a separate S3 bucket with object lock. |
 | Alerting | CloudWatch Alarms configured for: 5xx error rate > 1% over 5 minutes, authentication failure rate > 100/minute, single API key generating > 10x its rate limit in attempts, Lambda concurrent execution > 80% of reserved concurrency. Alarms notify via SNS to on-call email/SMS. |
@@ -502,7 +502,7 @@ logger.error(
 #### A10:2021 - Server-Side Request Forgery (SSRF)
 
 | Control | CalcEngine Implementation |
-|---------|--------------------------|
+| --------- | -------------------------- |
 | Applicability | **Low risk for MVP.** CalcEngine does not make outbound HTTP requests based on user input. The expression parser evaluates mathematical expressions; it does not fetch URLs, resolve hostnames, or make network calls. |
 | Outbound requests | The only outbound network calls from Lambda are: (1) DynamoDB queries via AWS SDK (endpoint determined by AWS region, not user input), (2) Secrets Manager reads at cold start (secret name hardcoded in config, not user input). |
 | Phase 3 consideration | When currency conversion is added (Phase 3), the service will fetch exchange rates from a financial data provider. At that point: the provider URL will be an environment variable (not user input), requests will use an allowlisted hostname, and responses will be validated against an expected schema before use. This section must be updated before Phase 3 launches. |
@@ -515,7 +515,7 @@ logger.error(
 ### Test Strategy Overview
 
 | Test Type | Required | Coverage Target | Tooling |
-|-----------|----------|----------------|---------|
+| ----------- | ---------- | ---------------- | --------- |
 | Unit Tests | Yes | 90% line, 80% branch | pytest + pytest-cov |
 | Mathematical Accuracy Tests | Yes | 100% of implemented functions | pytest + hypothesis |
 | Integration Tests | Yes | All API endpoints, DynamoDB interactions | pytest + moto (AWS mocking) |
@@ -530,7 +530,7 @@ logger.error(
 - **Naming Convention**: Test files mirror source files. `src/calcengine/trig.py` tested in `tests/unit/test_trig.py`. Test functions named `test_<function>_<scenario>` (e.g., `test_sin_zero_returns_zero`, `test_sin_negative_pi_returns_zero`).
 - **Test Location**: Separate `tests/` directory tree. Not co-located with source.
 
-```
+```text
 tests/
   unit/
     test_arithmetic.py
@@ -605,7 +605,7 @@ class TestSinAccuracy:
 ### CI/CD Testing Gates
 
 | Pipeline Stage | Required Tests | Tooling | Failure Action |
-|---------------|---------------|---------|----------------|
+| --------------- | --------------- | --------- | ---------------- |
 | Pre-commit | ruff check, ruff format --check, mypy | ruff, mypy via pre-commit hooks | Block commit |
 | Pull Request | Unit tests, accuracy tests, integration tests, coverage check | pytest, GitHub Actions | Block merge |
 | Pre-deploy (staging) | All PR tests + load test (100 concurrent, 60 seconds) | pytest + Locust, GitHub Actions | Block deploy |
@@ -643,7 +643,7 @@ uv run ruff format src/ tests/
 
 ## Project Structure
 
-```
+```text
 calcengine/
   .github/
     workflows/
@@ -749,7 +749,7 @@ calcengine/
 ### Directory Rules
 
 | Directory | Contains | Rules |
-|-----------|----------|-------|
+| ----------- | ---------- | ------- |
 | `src/calcengine/` | All application source code | Only Python. No config files, no tests, no docs. |
 | `src/calcengine/engine/` | Pure math functions | No AWS imports. No HTTP imports. No side effects. Pure functions only. Must be testable without any mocking. |
 | `src/calcengine/api/` | FastAPI routes, middleware, models | HTTP-layer only. Calls engine functions. Does not contain math logic. |
@@ -1208,7 +1208,7 @@ class ExampleApiStack(Stack):
 ## How This Document Feeds Into AI-DLC
 
 | Section | AI-DLC Stage | How It Is Used |
-|---------|--------------|----------------|
+| --------- | -------------- | ---------------- |
 | Project Technical Summary | Workspace Detection | Greenfield classification, team context |
 | Programming Languages | Code Generation | Python 3.12 enforced, no other languages without approval |
 | uv Standards | Code Generation | All dependency operations use uv, pyproject.toml is single config source |

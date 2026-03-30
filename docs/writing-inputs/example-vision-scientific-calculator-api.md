@@ -29,7 +29,7 @@ The specific problems are:
 ### Target Users and Stakeholders
 
 | User Type | Description | Primary Need |
-|-----------|-------------|--------------|
+| ----------- | ------------- | -------------- |
 | Application Developer | Backend or frontend engineer integrating math into a product | Reliable, well-documented API with consistent results across calls |
 | EdTech Product Manager | Non-technical stakeholder at an education company | Confidence that calculation results shown to students are correct |
 | Financial Analyst / Quant Developer | Developer building financial models or trading systems | Arbitrary-precision arithmetic with auditable, versioned calculation history |
@@ -48,7 +48,7 @@ The specific problems are:
 ### Success Metrics
 
 | Metric | Current State | Target State (12 months post-MVP) | Measurement Method |
-|--------|--------------|-----------------------------------|-------------------|
+| -------- | -------------- | ----------------------------------- | ------------------- |
 | Registered API accounts | 0 | 5,000 | API key registration count |
 | Monthly active API consumers | 0 | 1,200 | Unique API keys making at least 1 call/month |
 | API calls per month | 0 | 10 million | CloudWatch API Gateway metrics |
@@ -218,7 +218,7 @@ CalcEngine becomes the default computation layer for any application that needs 
 ### Long-Term Roadmap
 
 | Phase | Focus | Timeframe |
-|-------|-------|-----------|
+| ------- | ------- | ----------- |
 | MVP | Core arithmetic, trigonometry, basic statistics, expression evaluation, API platform, documentation portal, free + paid tiers | Months 1-6 |
 | Phase 2 | Linear algebra, calculus, financial math, arbitrary-precision mode, client SDKs (5 languages), calculation audit log, team workspaces | Months 7-14 |
 | Phase 3 | Unit conversion, physical constants, step-by-step solutions, batch processing, enterprise features, on-premises option | Months 15-22 |
@@ -246,7 +246,7 @@ Prove that developers will pay for a hosted scientific calculator API by launchi
 ### Features In Scope (MVP)
 
 | Feature | Description | Priority | Rationale for Inclusion |
-|---------|-------------|----------|------------------------|
+| --------- | ------------- | ---------- | ------------------------ |
 | Basic arithmetic operations | Add, subtract, multiply, divide, modulo, power, square root, nth root, absolute value, floor, ceiling, rounding | Must Have | Foundation for all other calculations. Table stakes for any calculator API. |
 | Expression evaluation | Accept a string math expression (e.g., "2 * (3 + 4)^2 / sin(pi)") and return the evaluated result. Support operator precedence, parentheses, and nested functions. | Must Have | The single most valuable differentiator. Developers send expressions as strings instead of building parsers. |
 | Trigonometric functions | sin, cos, tan, asin, acos, atan, atan2 with degree and radian mode | Must Have | Universal requirement across EdTech, engineering, and graphics use cases. |
@@ -264,7 +264,7 @@ Prove that developers will pay for a hosted scientific calculator API by launchi
 ### Features Explicitly Out of Scope (MVP)
 
 | Feature | Reason for Deferral | Target Phase |
-|---------|-------------------|--------------|
+| --------- | ------------------- | -------------- |
 | Arbitrary-precision arithmetic | Adds significant complexity to every endpoint. Standard IEEE 754 double precision is sufficient for MVP validation. | Phase 2 |
 | Matrix and linear algebra operations | Large feature surface area. Not needed to validate core business hypothesis. | Phase 2 |
 | Calculus (differentiation, integration) | Requires numerical methods expertise and extensive edge-case testing. | Phase 2 |
@@ -338,7 +338,7 @@ Prove that developers will pay for a hosted scientific calculator API by launchi
 ### Key Risks
 
 | Risk | Likelihood | Impact | Mitigation |
-|------|-----------|--------|------------|
+| ------ | ----------- | -------- | ------------ |
 | Low developer adoption: market prefers local libraries over hosted APIs for math | Medium | High | Free tier lowers barrier. Emphasize cross-platform consistency and expression evaluation as differentiators that local libraries lack. Monitor signup-to-active-use conversion. |
 | Accuracy bugs damage credibility: a wrong calculation result reported publicly | Low | Critical | Comprehensive test suite (500+ cases per function), comparison against reference implementations (Wolfram Alpha, Python mpmath), automated regression testing on every deploy. |
 | Expression parser edge cases: unexpected input causes crashes or wrong results | Medium | High | Fuzz testing with randomized expressions, explicit grammar definition, sandbox the parser to prevent injection. |

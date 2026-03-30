@@ -344,6 +344,7 @@ uv run python run.py ext-test --scenario sci-calc \
 ```
 
 This runs the evaluation twice:
+
 1. With all extension opt-ins answered "YES" (maximum guidance)
 2. With all extension opt-ins answered "NO" (baseline only)
 

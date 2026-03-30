@@ -31,7 +31,7 @@
 ## Do NOT Use
 
 | Prohibited | Reason | Use Instead |
-|-----------|--------|-------------|
+| ----------- | -------- | ------------- |
 | `eval()`, `exec()`, `compile()` | Security -- arbitrary code execution | AST-based expression parser |
 | Flask, Django | Project uses FastAPI | FastAPI |
 | requests | Blocks async event loop | httpx |

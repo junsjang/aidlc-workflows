@@ -18,7 +18,7 @@ This document ensures that code generation, infrastructure design, and NFR decis
 A Technical Environment Document can target one of two project contexts:
 
 | Context | Definition | Key Differences |
-|---------|-----------|-----------------|
+| --------- | ----------- | ----------------- |
 | **Greenfield** | No existing code. Building from scratch. | All choices are open. Document defines the starting point. |
 | **Brownfield** | Existing codebase. Adding, modifying, or migrating. | Choices are constrained by what exists. Document defines what to keep, change, or avoid. |
 
@@ -438,13 +438,13 @@ Every example should include:
 
 ## File Inventory
 | File | Purpose |
-|------|---------|
+| ------ | --------- |
 | handler.ts | Example implementation |
 | handler.test.ts | Test pattern |
 
 ## Customization Guide
 | Element | Customize? | Notes |
-|---------|-----------|-------|
+| --------- | ----------- | ------- |
 | Error handling structure | No | Must follow project standard |
 | Business logic | Yes | Replace with actual domain logic |
 | Route path | Yes | Follow API naming conventions |
@@ -537,7 +537,7 @@ a summary of the current technical state.]
 ## How This Document Feeds Into AI-DLC
 
 | Technical Environment Section | AI-DLC Stage | How It Is Used |
-|------------------------------|--------------|----------------|
+| ------------------------------ | -------------- | ---------------- |
 | Project Technical Summary | Workspace Detection | Context for project classification |
 | Programming Languages | Code Generation | Language selection and version constraints |
 | Frameworks and Libraries | Code Generation, NFR Design | Dependency selection and prohibited library checks |

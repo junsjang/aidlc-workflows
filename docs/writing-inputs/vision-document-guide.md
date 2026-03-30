@@ -259,7 +259,7 @@ These feed directly into the Requirements Analysis clarifying questions.]
 ## How This Document Feeds Into AI-DLC
 
 | Vision Document Section | AI-DLC Stage | How It Is Used |
-|------------------------|--------------|----------------|
+| ------------------------ | -------------- | ---------------- |
 | Executive Summary | Workspace Detection | Initial context for project classification |
 | Business Context | Requirements Analysis | Drives clarifying questions and requirements depth |
 | Full Scope Vision | User Stories, Application Design | Informs persona creation, component identification |
