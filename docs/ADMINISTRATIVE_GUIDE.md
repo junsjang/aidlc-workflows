@@ -51,6 +51,8 @@ awslabs/aidlc-workflows/
 │       ├── release.yml           # GitHub Release on tag push
 │       ├── release-pr.yml        # Changelog PR before release
 │       └── tag-on-merge.yml      # Auto-tag on release PR merge
+├── .claude/
+│   └── settings.json             # Shared Claude Code project settings
 ├── aidlc-rules/                  # The distributable product
 │   ├── aws-aidlc-rules/          # Core workflow rules
 │   └── aws-aidlc-rule-details/   # Detailed rules by phase
@@ -114,8 +116,11 @@ The release flow is **changelog-first**: the CHANGELOG is updated *before* the t
 flowchart LR
     A["git push main"] --> B{{"Manual approval\n(codebuild environment)"}}
     C["workflow_dispatch\n(no tag input)"] --> B
-    B --> D["Run AWS CodeBuild"]
-    D --> E["Upload workflow artifacts"]
+    D["pull_request\n(aidlc-rules/** changed)"] --> E{"codebuild\nlabel?"}
+    E -->|yes| B
+    E -->|no| F["Job skipped"]
+    B --> G["Run AWS CodeBuild"]
+    G --> H["Upload workflow artifacts"]
 ```
 
 ### Pipeline 3: Pull Request Validation
@@ -203,12 +208,14 @@ flowchart TD
 | Property        | Value                                                                                                                                                    |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **File**        | `.github/workflows/codebuild.yml`                                                                                                                        |
-| **Triggers**    | `push` to `main`, `push` tags `v*`, `workflow_dispatch` (dispatched by `tag-on-merge.yml` or manual — select a tag in the UI to trigger a release build) |
+| **Triggers**    | `push` to `main`, `push` tags `v*`, `pull_request` to `main` (label-gated, path-filtered), `workflow_dispatch` (dispatched by `tag-on-merge.yml` or manual — select a tag in the UI to trigger a release build) |
 | **Environment** | `codebuild` (protected, manual approval)                                                                                                                 |
 | **Runner**      | `ubuntu-latest`                                                                                                                                          |
 | **Concurrency** | Groups by `{workflow}-{ref}`, cancels in-progress                                                                                                        |
 
 **Purpose:** Runs an AWS CodeBuild project, downloads primary and secondary artifacts from S3, caches them in GitHub Actions cache, uploads them as workflow artifacts, and (when triggered from a `v*` tag) attaches them to the GitHub Release.
+
+**PR label gate:** For `pull_request` events, the workflow only fires when files under `aidlc-rules/**` are changed (via `paths` filter) and the `build` job only runs when the `codebuild` label is present on the PR (via `contains(github.event.pull_request.labels.*.name, 'codebuild')`). The trigger includes `types: [opened, synchronize, reopened, labeled]` so that subsequent pushes to a labeled PR re-trigger the build automatically. `push`, `workflow_dispatch`, and tag events bypass the label check entirely.
 
 **Job: `build`**
 
@@ -414,6 +421,7 @@ Both `codebuild.yml` and `pull-request-lint.yml` follow a **deny-all-then-grant*
 | **AWS authentication**      | OIDC-based role assumption via `id-token: write` — no static credentials stored                                                                                   |
 | **Least-privilege tokens**  | `codebuild.yml` and `pull-request-lint.yml` explicitly deny all 16 permission scopes at workflow level, grant only required scopes at job level                   |
 | **Environment protection**  | `codebuild` environment gates AWS credential access with potential reviewer/branch rules                                                                          |
+| **Label-gated CI**          | `codebuild.yml` requires the `codebuild` label on PRs and only triggers for `aidlc-rules/**` changes, preventing unnecessary builds and environment approval prompts |
 | **Concurrency control**     | `codebuild.yml` and `pull-request-lint.yml` cancel in-progress runs for the same branch                                                                          |
 | **Safe PR trigger**         | `pull-request-lint.yml` uses `pull_request_target` but never checks out PR code — only inspects metadata (title, labels, body)                                    |
 | **Injection-safe inputs**   | All user-controlled and event-driven inputs (`inputs.version`, `pull_request.head.ref`) passed via `env:` variables, never directly interpolated in `run:` blocks |
