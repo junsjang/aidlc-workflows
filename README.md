@@ -13,6 +13,7 @@ AI-DLC is an intelligent software development workflow that adapts to your needs
 - [Three-Phase Adaptive Workflow](#three-phase-adaptive-workflow)
 - [Key Features](#key-features)
 - [Extensions](#extensions)
+- [Supporting Tools](#supporting-tools)
 - [Tenets](#tenets)
 - [Prerequisites](#prerequisites)
 - [Troubleshooting](#troubleshooting)
@@ -541,6 +542,71 @@ You can extend an existing category or create an entirely new one.
    - Include a **Verification** section with concrete checks the model should evaluate.
 3. Add a matching **opt-in file** using the naming convention `<name>.opt-in.md` (e.g., `compliance.opt-in.md`). See `security-baseline.opt-in.md` for the expected format. Omitting this file means the extension is always enforced with no user opt-out.
 4. Rules are blocking by default — if verification criteria are not met, the stage cannot proceed until the finding is resolved.
+
+---
+
+## Supporting Tools
+
+The `scripts/` directory contains supporting tools that enhance the AI-DLC workflow:
+
+### AIDLC Evaluator
+
+**Location:** [`scripts/aidlc-evaluator/`](scripts/aidlc-evaluator/)
+
+Automated testing and reporting framework for validating changes to AI-DLC workflows. The evaluator provides:
+
+- **Golden Test Cases** — Curated baseline test cases for validation
+- **Execution Framework** — Orchestration for running test cases through evaluation pipelines
+- **Semantic Evaluation** — AI-based assessment of output correctness and completeness
+- **Code Evaluation** — Static analysis (linting, security scanning, duplication detection)
+- **NFR Evaluation** — Non-functional requirements testing (token usage, execution time, cross-model consistency)
+- **CI/CD Integration** — Automated pipelines for PR validation
+
+**Quick Start:**
+```bash
+cd scripts/aidlc-evaluator
+uv sync
+uv run python run.py test
+```
+
+**Documentation:** See [scripts/aidlc-evaluator/README.md](scripts/aidlc-evaluator/README.md)
+
+---
+
+### AIDLC Design Reviewer
+
+**Location:** [`scripts/aidlc-designreview/`](scripts/aidlc-designreview/)
+
+⚠️ **EXPERIMENTAL FEATURE** — AI-powered design review tool that analyzes AIDLC design artifacts using Claude models via AWS Bedrock.
+
+**Features:**
+- **Multi-Agent Review** — Three specialized AI agents (Critique, Alternatives, Gap Analysis)
+- **Quality Scoring** — Weighted severity analysis with actionable recommendations
+- **Two Deployment Modes:**
+  - **CLI Tool** — On-demand reviews for CI/CD pipelines
+  - **Claude Code Hook** — Real-time review during development (experimental)
+
+**Installation (CLI Tool):**
+```bash
+cd scripts/aidlc-designreview
+uv sync --extra test
+source .venv/bin/activate  # Linux/Mac
+design-reviewer --aidlc-docs /path/to/aidlc-docs
+```
+
+**Installation (Claude Code Hook):**
+```bash
+# From workspace root
+./scripts/aidlc-designreview/tool-install/install-linux.sh      # Linux
+./scripts/aidlc-designreview/tool-install/install-mac.sh        # macOS
+.\scripts\aidlc-designreview\tool-install\install-windows.ps1   # Windows PowerShell
+```
+
+The installer automatically detects your workspace root and installs the hook to `.claude/`.
+
+**Documentation:**
+- [scripts/aidlc-designreview/README.md](scripts/aidlc-designreview/README.md) — Main documentation
+- [scripts/aidlc-designreview/INSTALLATION.md](scripts/aidlc-designreview/INSTALLATION.md) — Hook installation guide
 
 ---
 
