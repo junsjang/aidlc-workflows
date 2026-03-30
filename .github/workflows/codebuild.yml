@@ -5,6 +5,13 @@ on:
   pull_request:
     branches:
       - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+    paths:
+      - 'aidlc-rules/**'
   push:
     branches:
       - main
@@ -37,6 +44,9 @@ permissions:
 
 jobs:
   build:
+    if: >-
+      github.event_name != 'pull_request'
+      || contains(github.event.pull_request.labels.*.name, 'codebuild')
     environment: codebuild
 
     permissions:
