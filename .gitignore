@@ -2,6 +2,7 @@
 .amazonq/**
 .claude/**
 .codebuild/**
+.worktrees/**
 .vscode/**
 .env
 buildspec.yml
