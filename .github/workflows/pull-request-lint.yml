@@ -170,6 +170,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      issues: write
       pull-requests: write
     if: github.event_name == 'pull_request_target'
     steps:
