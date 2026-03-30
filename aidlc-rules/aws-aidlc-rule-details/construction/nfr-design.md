@@ -20,18 +20,21 @@ Incorporate NFR requirements into unit design using patterns and logical compone
 - Each step should have a checkbox []
 
 ### Step 3: Generate Context-Appropriate Questions
-**DIRECTIVE**: Analyze the NFR requirements to generate ONLY questions relevant to THIS specific unit's NFR design. Use the categories below as inspiration, NOT as a mandatory checklist. Skip entire categories if not applicable.
+**DIRECTIVE**: Thoroughly analyze the NFR requirements to identify ALL areas where clarification would improve the NFR design. Be proactive in asking questions to ensure comprehensive coverage of design patterns and logical components.
+
+**CRITICAL**: Default to asking questions when there is ANY ambiguity or missing detail that could affect NFR design quality. It's better to ask too many questions than to make incorrect assumptions.
 
 - EMBED questions using [Answer]: tag format
-- Focus on ambiguities and missing information specific to this unit
-- Generate questions only where user input is needed for pattern and component decisions
+- Focus on ANY ambiguities, missing information, or areas needing clarification
+- Generate questions wherever user input would improve pattern and component decisions
+- **When in doubt, ask the question** - overconfidence leads to poor designs
 
-**Example question categories** (adapt as needed):
-- **Resilience Patterns** - Only if fault tolerance approach needs clarification
-- **Scalability Patterns** - Only if scaling mechanisms are unclear
-- **Performance Patterns** - Only if performance optimization strategy is ambiguous
-- **Security Patterns** - Only if security implementation approach needs input
-- **Logical Components** - Only if infrastructure components (queues, caches, etc.) need clarification
+**Question categories to consider** (evaluate ALL categories):
+- **Resilience Patterns** - Ask about fault tolerance approach, retry strategies, and circuit breaker patterns
+- **Scalability Patterns** - Ask about scaling mechanisms, load distribution, and elasticity requirements
+- **Performance Patterns** - Ask about optimization strategies, caching approaches, and latency targets
+- **Security Patterns** - Ask about security implementation approach, encryption, and access control patterns
+- **Logical Components** - Ask about infrastructure components (queues, caches, etc.) and their configuration needs
 
 ### Step 4: Store Plan
 - Save as `aidlc-docs/construction/plans/{unit-name}-nfr-design-plan.md`
@@ -39,8 +42,11 @@ Incorporate NFR requirements into unit design using patterns and logical compone
 
 ### Step 5: Collect and Analyze Answers
 - Wait for user to complete all [Answer]: tags
-- Review for vague or ambiguous responses
-- Add follow-up questions if needed
+- **MANDATORY**: Carefully review ALL responses for vague or ambiguous answers
+- **CRITICAL**: Add follow-up questions for ANY unclear responses - do not proceed with ambiguity
+- Look for responses like "depends", "maybe", "not sure", "mix of", "somewhere between"
+- Create clarification questions file if ANY ambiguities are detected
+- **Do not proceed until ALL ambiguities are resolved**
 
 ### Step 6: Generate NFR Design Artifacts
 - Create `aidlc-docs/construction/{unit-name}/nfr-design/nfr-design-patterns.md`

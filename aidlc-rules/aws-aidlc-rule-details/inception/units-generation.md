@@ -35,19 +35,22 @@ This stage decomposes the system into manageable units of work through two integ
 - [ ] Ensure all stories are assigned to units
 
 ## Step 3: Generate Context-Appropriate Questions
-**DIRECTIVE**: Analyze the requirements, stories, and application design to generate ONLY questions relevant to THIS specific decomposition problem. Use the categories below as inspiration, NOT as a mandatory checklist. Skip entire categories if not applicable.
+**DIRECTIVE**: Thoroughly analyze the requirements, stories, and application design to identify ALL areas where clarification would improve the system decomposition. Be proactive in asking questions to ensure comprehensive understanding of unit boundaries and responsibilities.
+
+**CRITICAL**: Default to asking questions when there is ANY ambiguity or missing detail that could affect decomposition quality. It's better to ask too many questions than to make incorrect assumptions.
 
 - EMBED questions using [Answer]: tag format
-- Focus on ambiguities and missing information specific to this context
-- Generate questions only where user input is needed for decision-making
+- Focus on ANY ambiguities, missing information, or areas needing clarification
+- Generate questions wherever user input would improve decomposition decisions
+- **When in doubt, ask the question** - overconfidence leads to poor decomposition
 
-**Example question categories** (adapt as needed):
-- **Story Grouping** - Only if multiple stories exist and grouping strategy is unclear
-- **Dependencies** - Only if multiple units likely and integration approach is ambiguous
-- **Team Alignment** - Only if team structure or ownership is unclear
-- **Technical Considerations** - Only if scalability/deployment requirements differ across units
-- **Business Domain** - Only if domain boundaries or bounded contexts are unclear
-- **Code Organization (Greenfield multi-unit only)** - Ask deployment model and directory structure preferences
+**Question categories to consider** (evaluate ALL categories):
+- **Story Grouping** - Ask about grouping strategy, cohesion criteria, and story dependencies
+- **Dependencies** - Ask about integration approach, communication patterns, and dependency direction between units
+- **Team Alignment** - Ask about team structure, ownership boundaries, and development workflow preferences
+- **Technical Considerations** - Ask about scalability and deployment requirements that may differ across units
+- **Business Domain** - Ask about domain boundaries, bounded contexts, and shared domain concepts
+- **Code Organization (Greenfield multi-unit only)** - Ask about deployment model and directory structure preferences
 
 ## Step 4: Store UOW Plan
 - Save as `aidlc-docs/inception/plans/unit-of-work-plan.md`
