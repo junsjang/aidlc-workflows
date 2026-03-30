@@ -1,16 +1,16 @@
 # Auto-label configuration for actions/labeler
 # See https://github.com/actions/labeler#match-object for syntax
 
-codebuild:
+rules:
 - changed-files:
   - any-glob-to-any-file: 'aidlc-rules/**'
 
 documentation:
 - changed-files:
-  - any-glob-to-any-file:
+  - all-globs-to-any-file:
     - '**/*.md'
-    - 'docs/**'
+    - '!aidlc-rules/**'
 
-workflows:
+github:
 - changed-files:
   - any-glob-to-any-file: '.github/**'
