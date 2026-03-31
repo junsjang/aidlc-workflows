@@ -195,6 +195,48 @@ jobs:
           echo "::error::grype found vulnerabilities"
           exit ${{ steps.grype.outputs.exit_code }}  # nosemgrep: yaml.github-actions.security.curl-eval.curl-eval
 
+  bandit:
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    runs-on: ubuntu-latest
+    env:
+      BANDIT_VERSION: "1.9.3"
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - run: |
+          echo "bandit[sarif]==$BANDIT_VERSION" > requirements.txt
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: '3.x'
+          cache: 'pip'
+      - name: Run bandit
+        id: bandit
+        run: |
+          pip install -r requirements.txt
+          rm requirements.txt
+          set +e
+          bandit -r . -f sarif -o bandit-report_sarif.json
+          BANDIT_EXIT=$?
+          set -e
+          echo "exit_code=$BANDIT_EXIT" >> "$GITHUB_OUTPUT"
+          exit 0
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        if: always()
+        with:
+          name: bandit.sarif
+          path: bandit-report_sarif.json
+          if-no-files-found: error
+      - uses: github/codeql-action/upload-sarif@5e7a52feb2a3dfb87f88be2af33b9e2275f48de6 # v4.32.2
+        continue-on-error: true
+        with:
+          sarif_file: bandit-report_sarif.json
+      - if: steps.bandit.outputs.exit_code != '0'
+        run: |
+          echo "::error::bandit found security issues"
+          exit ${{ steps.bandit.outputs.exit_code }}  # nosemgrep: yaml.github-actions.security.curl-eval.curl-eval
+
   checkov:
     permissions:
       actions: read
