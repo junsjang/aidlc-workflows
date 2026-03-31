@@ -1,0 +1,14 @@
+# Checkov configuration
+# https://www.checkov.io/2.Basics/CLI%20Command%20Reference.html
+
+# Scan GitHub Actions workflows and Dockerfiles
+framework:
+  - github_actions
+  - dockerfile
+
+# Skip checks that conflict with this repo's patterns
+skip-check:
+  # CKV_GHA_7: "The build output cannot be affected by user parameters other
+  # than the build entry point and the top-level source location"
+  # — conflicts with inline buildspec-override in codebuild.yml
+  - CKV_GHA_7

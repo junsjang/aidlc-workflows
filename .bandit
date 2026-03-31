@@ -1,0 +1,13 @@
+# Bandit configuration
+# https://bandit.readthedocs.io/en/latest/config.html
+
+[bandit]
+# Only scan the Python source code
+targets = scripts/aidlc-evaluator
+
+# Exclude test directories (test code often has intentional patterns
+# that trigger false positives like assert, subprocess in fixtures)
+exclude = */tests/*
+
+# Skip low-confidence findings to reduce noise
+confidence-level = medium

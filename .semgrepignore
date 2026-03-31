@@ -1,0 +1,11 @@
+# Semgrep ignore patterns
+# https://semgrep.dev/docs/ignoring-files-folders-code
+
+# Lock files (large, auto-generated)
+uv.lock
+
+# Test fixtures and golden files
+scripts/aidlc-evaluator/test_cases/
+
+# Build artifacts
+.codebuild/

@@ -1,0 +1,10 @@
+# Grype configuration
+# https://github.com/anchore/grype#configuration
+
+# Only fail on high or critical vulnerabilities
+fail-on-severity: high
+
+# Ignore specific CVEs that have been reviewed and accepted
+ignore: []
+#  - vulnerability: CVE-YYYY-NNNNN
+#    reason: "explanation of why this is acceptable"
