@@ -21,40 +21,12 @@ config:
   MD036: false
 
   # ============================================================
-  # TEMPORARILY DISABLED — remaining violations are in aidlc-rules/ only
-  # To be re-enabled one-by-one as fixes land (ordered by LLM prompt impact).
-  # See PR #159 for the incremental remediation plan.
+  # STYLE SETTINGS
   # ============================================================
 
-  # --- Tier 1: Zero prompt impact (invisible whitespace) ---
-  MD009: false  # no-trailing-spaces (9 violations in aidlc-rules/)
-  MD012: false  # no-multiple-blanks (2 violations in aidlc-rules/)
-  MD047: false  # single-trailing-newline (4 violations in aidlc-rules/)
-
-  # --- Tier 2: Zero prompt impact (formatting normalization) ---
-  MD029: false  # ol-prefix (1 violation in aidlc-rules/)
-  # MD049/emphasis-style — re-enabled (0 violations remain)
-  MD026: false  # no-trailing-punctuation (17 violations in aidlc-rules/)
-
-  # --- Tier 3: Zero prompt impact (blank line structure) ---
-  MD022: false  # blanks-around-headings (274 violations in aidlc-rules/)
-  MD032: false  # blanks-around-lists (426 violations in aidlc-rules/)
-  MD031: false  # blanks-around-fences (31 violations in aidlc-rules/)
-
-  # --- Tier 4: Minimal prompt impact (table/URL formatting) ---
-  MD060:        # table-column-style — enforce aligned style globally
+  # Tables must use aligned column style (pipes vertically aligned)
+  MD060:
     style: "aligned"
-  # MD034/no-bare-urls — re-enabled (0 violations remain)
-  # MD028/no-blanks-blockquote — re-enabled (0 violations remain)
-
-  # --- Tier 5: Low prompt impact (structural cosmetic) ---
-  MD046: false  # code-block-style (8 violations in aidlc-rules/)
-  MD007: false  # ul-indent (34 violations in aidlc-rules/)
-  # MD041/first-line-heading — re-enabled (0 violations remain)
-
-  # --- Tier 6: Needs review (adds content or changes structure) ---
-  MD040: false  # fenced-code-language (18 violations in aidlc-rules/)
-  MD025: false  # single-title (13 violations in aidlc-rules/)
 
 # Ignore generated/vendored/test fixture files
 ignores:
