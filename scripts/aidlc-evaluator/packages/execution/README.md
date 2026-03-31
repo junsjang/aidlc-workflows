@@ -15,26 +15,26 @@ The agents repeat this handoff loop through all Inception and Construction phase
 
 **Inception Phase** — what to build and why:
 
-| Stage | Condition |
-| --- | --- |
-| Workspace Detection | Always |
-| Reverse Engineering | Brownfield only |
-| Requirements Analysis | Always |
-| User Stories | If complexity warrants |
-| Workflow Planning | Always |
-| Application Design | Conditional |
-| Units Generation | Conditional |
+| Stage                 | Condition              |
+| --------------------- | ---------------------- |
+| Workspace Detection   | Always                 |
+| Reverse Engineering   | Brownfield only        |
+| Requirements Analysis | Always                 |
+| User Stories          | If complexity warrants |
+| Workflow Planning     | Always                 |
+| Application Design    | Conditional            |
+| Units Generation      | Conditional            |
 
 **Construction Phase** — how to build it (runs per unit of work):
 
-| Stage | Condition |
-| --- | --- |
-| Functional Design | Conditional |
-| NFR Requirements | Conditional |
-| NFR Design | Conditional |
+| Stage                 | Condition   |
+| --------------------- | ----------- |
+| Functional Design     | Conditional |
+| NFR Requirements      | Conditional |
+| NFR Design            | Conditional |
 | Infrastructure Design | Conditional |
-| Code Generation | Always |
-| Build and Test | Always |
+| Code Generation       | Always      |
+| Build and Test        | Always      |
 
 ## Prerequisites
 
@@ -108,19 +108,19 @@ uv run aidlc-runner --vision ./my-project-vision.md \
 
 ### CLI Reference
 
-| Flag | Required | Default | Description |
-| --- | --- | --- | --- |
-| `--vision PATH` | Yes | — | Path to the vision/constraints markdown file |
-| `--tech-env PATH` | No | — | Path to the technical environment markdown file |
-| `--config PATH` | No | Built-in default | Path to a YAML configuration file |
-| `--aws-profile TEXT` | No | `default` | AWS profile name |
-| `--aws-region TEXT` | No | `us-west-2` | AWS region for Bedrock |
-| `--executor-model TEXT` | No | Claude Opus 4 | Model ID for the executor agent |
-| `--simulator-model TEXT` | No | Claude Sonnet 4.5 | Model ID for the simulator agent |
-| `--output-dir PATH` | No | `../runs` | Directory where run folders are created |
-| `--rules-path PATH` | No | Cloned from Git | Path to a local AIDLC rules directory |
-| `--no-exec` | No | Enabled | Disable in-workflow command execution |
-| `--no-post-tests` | No | Enabled | Disable post-run test execution |
+| Flag                     | Required | Default           | Description                                     |
+| ------------------------ | -------- | ----------------- | ----------------------------------------------- |
+| `--vision PATH`          | Yes      | —                 | Path to the vision/constraints markdown file    |
+| `--tech-env PATH`        | No       | —                 | Path to the technical environment markdown file |
+| `--config PATH`          | No       | Built-in default  | Path to a YAML configuration file               |
+| `--aws-profile TEXT`     | No       | `default`         | AWS profile name                                |
+| `--aws-region TEXT`      | No       | `us-west-2`       | AWS region for Bedrock                          |
+| `--executor-model TEXT`  | No       | Claude Opus 4     | Model ID for the executor agent                 |
+| `--simulator-model TEXT` | No       | Claude Sonnet 4.5 | Model ID for the simulator agent                |
+| `--output-dir PATH`      | No       | `../runs`         | Directory where run folders are created         |
+| `--rules-path PATH`      | No       | Cloned from Git   | Path to a local AIDLC rules directory           |
+| `--no-exec`              | No       | Enabled           | Disable in-workflow command execution           |
+| `--no-post-tests`        | No       | Enabled           | Disable post-run test execution                 |
 
 ## Configuration
 

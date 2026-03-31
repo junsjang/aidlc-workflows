@@ -551,14 +551,14 @@ Deployment and monitoring (future)
 
 ## Key Features
 
-| Feature | Description |
-| --------- | ------------- |
-| **Adaptive Intelligence** | Only executes stages that add value to your specific request |
-| **Context-Aware** | Analyzes existing codebase and complexity requirements |
-| **Risk-Based** | Complex changes get comprehensive treatment, simple changes stay efficient |
-| **Question-Driven** | Structured multiple-choice questions in files, not chat |
-| **Always in Control** | Review execution plans and approve each phase |
-| **Extensible** | Layer custom rules e.g. security, compliance, and organization-specific rules on top of the core workflow |
+| Feature                   | Description                                                                                               |
+| ------------------------- | --------------------------------------------------------------------------------------------------------- |
+| **Adaptive Intelligence** | Only executes stages that add value to your specific request                                              |
+| **Context-Aware**         | Analyzes existing codebase and complexity requirements                                                    |
+| **Risk-Based**            | Complex changes get comprehensive treatment, simple changes stay efficient                                |
+| **Question-Driven**       | Structured multiple-choice questions in files, not chat                                                   |
+| **Always in Control**     | Review execution plans and approve each phase                                                             |
+| **Extensible**            | Layer custom rules e.g. security, compliance, and organization-specific rules on top of the core workflow |
 
 ---
 
@@ -631,15 +631,15 @@ These are our core principles to guide our decision making.
 
 Have one of our supported platforms/tools for Assisted AI Coding installed:
 
-| Platform | Installation Link |
-| ---------- | ------------------ |
-| Kiro | [Install](https://kiro.dev/) |
-| Kiro CLI | [Install](https://kiro.dev/cli/) |
-| Amazon Q Developer IDE Plugin | [Install](https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/q-in-IDE.html) |
-| Cursor IDE | [Install](https://cursor.com/) |
-| Cline VS Code Extension | [Install](https://marketplace.visualstudio.com/items?itemName=saoudrizwan.claude-dev) |
-| Claude Code CLI | [Install](https://github.com/anthropics/claude-code) |
-| GitHub Copilot | [Install](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) + [Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat) |
+| Platform                      | Installation Link                                                                                                                                               |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Kiro                          | [Install](https://kiro.dev/)                                                                                                                                    |
+| Kiro CLI                      | [Install](https://kiro.dev/cli/)                                                                                                                                |
+| Amazon Q Developer IDE Plugin | [Install](https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/q-in-IDE.html)                                                                               |
+| Cursor IDE                    | [Install](https://cursor.com/)                                                                                                                                  |
+| Cline VS Code Extension       | [Install](https://marketplace.visualstudio.com/items?itemName=saoudrizwan.claude-dev)                                                                           |
+| Claude Code CLI               | [Install](https://github.com/anthropics/claude-code)                                                                                                            |
+| GitHub Copilot                | [Install](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) + [Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat) |
 
 ---
 
@@ -647,12 +647,12 @@ Have one of our supported platforms/tools for Assisted AI Coding installed:
 
 ### General Issues
 
-| Problem | Solution |
-| --------- | ---------- |
-| Rules not loading | Check file exists in the correct location for your platform |
-| File encoding issues | Ensure files are UTF-8 encoded |
-| Rules not applied in session | Start a new chat session after file changes |
-| Rule details not loading | Verify `.aidlc-rule-details/` exists with subdirectories |
+| Problem                      | Solution                                                    |
+| ---------------------------- | ----------------------------------------------------------- |
+| Rules not loading            | Check file exists in the correct location for your platform |
+| File encoding issues         | Ensure files are UTF-8 encoded                              |
+| Rules not applied in session | Start a new chat session after file changes                 |
+| Rule details not loading     | Verify `.aidlc-rule-details/` exists with subdirectories    |
 
 ### Platform-Specific Issues
 
@@ -733,20 +733,20 @@ For the complete reference of all documentation artifacts generated by the AI-DL
 ## Additional Resources
 
 <!-- TODO: Replace this Amplify URL with a permanent/stable URL when available -->
-| Resource | Link |
-| ---------- | ------ |
-| AI-DLC Method Definition Paper | [Paper](https://prod.d13rzhkk8cj2z0.amplifyapp.com/) |
-| AI-DLC Methodology Blog | [AWS Blog](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/) |
-| AI-DLC Open-source Launch Blog | [AWS Blog](https://aws.amazon.com/blogs/devops/open-sourcing-adaptive-workflows-for-ai-driven-development-life-cycle-ai-dlc/) |
-| AI-DLC Example Walkthrough Blog | [AWS Blog](https://aws.amazon.com/blogs/devops/building-with-ai-dlc-using-amazon-q-developer/) |
-| Amazon Q Developer Documentation | [Docs](https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/q-in-IDE.html) |
-| Kiro CLI Documentation | [Docs](https://kiro.dev/docs/cli/steering/) |
-| Cursor Rules Documentation | [Docs](https://cursor.com/docs/context/rules) |
-| Claude Code Documentation | [GitHub](https://github.com/anthropics/claude-code) |
-| GitHub Copilot Documentation | [Docs](https://docs.github.com/en/copilot) |
-| Working with AI-DLC (interaction patterns and tips) | [docs/WORKING-WITH-AIDLC.md](docs/WORKING-WITH-AIDLC.md) |
-| Contributing Guidelines | [CONTRIBUTING.md](CONTRIBUTING.md) |
-| Code of Conduct | [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) |
+| Resource                                            | Link                                                                                                                          |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| AI-DLC Method Definition Paper                      | [Paper](https://prod.d13rzhkk8cj2z0.amplifyapp.com/)                                                                          |
+| AI-DLC Methodology Blog                             | [AWS Blog](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/)                                             |
+| AI-DLC Open-source Launch Blog                      | [AWS Blog](https://aws.amazon.com/blogs/devops/open-sourcing-adaptive-workflows-for-ai-driven-development-life-cycle-ai-dlc/) |
+| AI-DLC Example Walkthrough Blog                     | [AWS Blog](https://aws.amazon.com/blogs/devops/building-with-ai-dlc-using-amazon-q-developer/)                                |
+| Amazon Q Developer Documentation                    | [Docs](https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/q-in-IDE.html)                                                |
+| Kiro CLI Documentation                              | [Docs](https://kiro.dev/docs/cli/steering/)                                                                                   |
+| Cursor Rules Documentation                          | [Docs](https://cursor.com/docs/context/rules)                                                                                 |
+| Claude Code Documentation                           | [GitHub](https://github.com/anthropics/claude-code)                                                                           |
+| GitHub Copilot Documentation                        | [Docs](https://docs.github.com/en/copilot)                                                                                    |
+| Working with AI-DLC (interaction patterns and tips) | [docs/WORKING-WITH-AIDLC.md](docs/WORKING-WITH-AIDLC.md)                                                                      |
+| Contributing Guidelines                             | [CONTRIBUTING.md](CONTRIBUTING.md)                                                                                            |
+| Code of Conduct                                     | [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)                                                                                      |
 
 ---
 

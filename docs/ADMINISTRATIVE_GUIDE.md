@@ -147,56 +147,56 @@ flowchart TD
 
 ### Release PR Workflow (`release-pr.yml`)
 
-| Property | Value |
+| Property        | Value                                             |
 | --------------- | ------------------------------------------------- |
-| **File** | `.github/workflows/release-pr.yml` |
-| **Trigger** | `workflow_dispatch` with optional `version` input |
-| **Environment** | *(none)* |
-| **Runner** | `ubuntu-latest` |
+| **File**        | `.github/workflows/release-pr.yml`                |
+| **Trigger**     | `workflow_dispatch` with optional `version` input |
+| **Environment** | *(none)*                                          |
+| **Runner**      | `ubuntu-latest`                                   |
 
 **Purpose:** Generates an updated `CHANGELOG.md` from conventional commits using git-cliff and opens a PR on a `release/vX.Y.Z` branch. This is the first step in the changelog-first release flow.
 
 **Job: `release-pr` ("Create Release PR")**
 
-| Step | Name | Action |
+| Step | Name                     | Action                                                                                                                                     |
 | ---- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1 | Checkout code | `actions/checkout` with `fetch-depth: 0` (full history for git-cliff) |
-| 2 | Install git-cliff | `orhun/git-cliff-action` to make the CLI available |
-| 3 | Determine version | Use `inputs.version` (with semver validation) or `git-cliff --bumped-version` for auto-detection; falls back to patch bump from latest tag |
-| 4 | Check tag does not exist | Fail early if the target tag already exists |
-| 5 | Generate changelog | `orhun/git-cliff-action` with `--tag vX.Y.Z` to generate `CHANGELOG.md` |
-| 6 | Create release PR | Check branch doesn't already exist, commit, push `release/vX.Y.Z` branch, open PR (with label `release` if it exists in the repo) |
+| 1    | Checkout code            | `actions/checkout` with `fetch-depth: 0` (full history for git-cliff)                                                                      |
+| 2    | Install git-cliff        | `orhun/git-cliff-action` to make the CLI available                                                                                         |
+| 3    | Determine version        | Use `inputs.version` (with semver validation) or `git-cliff --bumped-version` for auto-detection; falls back to patch bump from latest tag |
+| 4    | Check tag does not exist | Fail early if the target tag already exists                                                                                                |
+| 5    | Generate changelog       | `orhun/git-cliff-action` with `--tag vX.Y.Z` to generate `CHANGELOG.md`                                                                    |
+| 6    | Create release PR        | Check branch doesn't already exist, commit, push `release/vX.Y.Z` branch, open PR (with label `release` if it exists in the repo)          |
 
 **Version detection:** If a version is specified, it must be valid semver (`MAJOR.MINOR.PATCH`); both `v0.2.0` and `0.2.0` are accepted. If no version is specified, `git-cliff --bumped-version` determines the next version from conventional commit prefixes. The `[bump]` config in `cliff.toml` controls the rules (e.g., `feat` → minor bump, breaking change → major bump). If no conventional commits are found, the workflow falls back to a patch bump from the latest tag. If no tags exist at all, it exits cleanly with a warning (no PR is created).
 
 **External actions (SHA-pinned):**
 
-| Action | Version | SHA |
+| Action                   | Version | SHA                                        |
 | ------------------------ | ------- | ------------------------------------------ |
-| `actions/checkout` | v6.0.1 | `8e8c483db84b4bee98b60c0593521ed34d9990e8` |
-| `orhun/git-cliff-action` | v4.7.0 | `e16f179f0be49ecdfe63753837f20b9531642772` |
+| `actions/checkout`       | v6.0.1  | `8e8c483db84b4bee98b60c0593521ed34d9990e8` |
+| `orhun/git-cliff-action` | v4.7.0  | `e16f179f0be49ecdfe63753837f20b9531642772` |
 
 ---
 
 ### Tag Release Workflow (`tag-on-merge.yml`)
 
-| Property | Value |
+| Property        | Value                                                 |
 | --------------- | ----------------------------------------------------- |
-| **File** | `.github/workflows/tag-on-merge.yml` |
-| **Trigger** | `pull_request: types: [closed]` |
-| **Condition** | PR was merged AND branch name starts with `release/v` |
-| **Environment** | *(none)* |
-| **Runner** | `ubuntu-latest` |
+| **File**        | `.github/workflows/tag-on-merge.yml`                  |
+| **Trigger**     | `pull_request: types: [closed]`                       |
+| **Condition**   | PR was merged AND branch name starts with `release/v` |
+| **Environment** | *(none)*                                              |
+| **Runner**      | `ubuntu-latest`                                       |
 
 **Purpose:** Automatically creates a version tag on the merge commit when a release PR is merged, then dispatches `release.yml` (waits for completion) followed by `codebuild.yml`.
 
 **Job: `tag` ("Create Release Tag")**
 
-| Step | Name | Action |
+| Step | Name                               | Action                                                                                      |
 | ---- | ---------------------------------- | ------------------------------------------------------------------------------------------- |
-| 1 | Create tag | Extract version from branch name, verify tag doesn't exist, create via GitHub API |
-| 2 | Dispatch release workflow and wait | `gh workflow run release.yml --ref $TAG --repo $REPO`, then `gh run watch` until completion |
-| 3 | Dispatch codebuild workflow | `gh workflow run codebuild.yml --ref $TAG --repo $REPO` (runs after draft release exists) |
+| 1    | Create tag                         | Extract version from branch name, verify tag doesn't exist, create via GitHub API           |
+| 2    | Dispatch release workflow and wait | `gh workflow run release.yml --ref $TAG --repo $REPO`, then `gh run watch` until completion |
+| 3    | Dispatch codebuild workflow        | `gh workflow run codebuild.yml --ref $TAG --repo $REPO` (runs after draft release exists)   |
 
 **Tag creation:** Uses `gh api repos/.../git/refs` to create a lightweight tag.
 
@@ -208,13 +208,13 @@ flowchart TD
 
 ### CodeBuild Workflow (`codebuild.yml`)
 
-| Property | Value |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **File** | `.github/workflows/codebuild.yml` |
-| **Triggers** | `push` to `main`, `push` tags `v*`, `pull_request` to `main` (label-gated, path-filtered), `workflow_dispatch` (dispatched by `tag-on-merge.yml` or manual — select a tag in the UI to trigger a release build) |
-| **Environment** | `codebuild` (protected, manual approval) |
-| **Runner** | `ubuntu-latest` |
-| **Concurrency** | Groups by `{workflow}-{ref}`, cancels in-progress |
+| Property        | Value                                                                                                                                                                                                           |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **File**        | `.github/workflows/codebuild.yml`                                                                                                                                                                               |
+| **Triggers**    | `push` to `main`, `push` tags `v*`, `pull_request` to `main` (label-gated, path-filtered), `workflow_dispatch` (dispatched by `tag-on-merge.yml` or manual — select a tag in the UI to trigger a release build) |
+| **Environment** | `codebuild` (protected, manual approval)                                                                                                                                                                        |
+| **Runner**      | `ubuntu-latest`                                                                                                                                                                                                 |
+| **Concurrency** | Groups by `{workflow}-{ref}`, cancels in-progress                                                                                                                                                               |
 
 **Purpose:** Runs an AWS CodeBuild project, downloads primary and secondary artifacts from S3, caches them in GitHub Actions cache, uploads them as workflow artifacts, and (when triggered from a `v*` tag) attaches them to the GitHub Release.
 
@@ -222,38 +222,38 @@ flowchart TD
 
 **Job: `label-reminder`** (PR only, no `codebuild` label)
 
-| Step | Name | Action |
-| ---- | -------------------------------- | ------------------------------------------------------------------------------------------ |
-| 1 | Warn about missing codebuild label | Emits a `::warning::` annotation visible in the Actions summary |
-| 2 | Comment on PR | Posts a one-time PR comment (idempotent — skips if the reminder comment already exists) |
+| Step | Name                               | Action                                                                                     |
+| ---- | ---------------------------------- | ------------------------------------------------------------------------------------------ |
+| 1    | Warn about missing codebuild label | Emits a `::warning::` annotation visible in the Actions summary                            |
+| 2    | Comment on PR                      | Posts a one-time PR comment (idempotent — skips if the reminder comment already exists)    |
 
 This job runs only for `pull_request` events where `aidlc-rules/**` changed but the `codebuild` label is absent. It alerts maintainers and reviewers that the evaluation pipeline was not triggered. The comment is posted once per PR using an HTML comment marker (`<!-- codebuild-label-reminder -->`) to avoid duplicates.
 
 **Job: `label-cleanup`** (PR only, `codebuild` label present)
 
-| Step | Name | Action |
+| Step | Name                          | Action                                                                                   |
 | ---- | ----------------------------- | ---------------------------------------------------------------------------------------- |
-| 1 | Remove label reminder comment | Finds and deletes the `label-reminder` PR comment (no-op if it doesn't exist) |
+| 1    | Remove label reminder comment | Finds and deletes the `label-reminder` PR comment (no-op if it doesn't exist)            |
 
 This job runs when the `codebuild` label is applied, immediately removing the reminder comment without waiting for the `codebuild` environment approval gate.
 
 **Job: `build`**
 
-| Step | Name | Condition | Action |
+| Step | Name                         | Condition                 | Action                                                        |
 | ---- | ---------------------------- | ------------------------- | ------------------------------------------------------------- |
-| 1 | List caches | *(always)* | `gh cache list` for existing project caches |
-| 2 | Check cache | *(always)* | `actions/cache/restore` with `lookup-only: true` |
-| 3 | Configure AWS credentials | cache miss | `aws-actions/configure-aws-credentials` (OIDC) |
-| 4 | Run CodeBuild | cache miss | `aws-actions/aws-codebuild-run-build` with inline buildspec |
-| 5 | Build ID | cache miss (always) | Echo CodeBuild build ID |
-| 6 | Download CodeBuild artifacts | cache miss | Download primary + secondary artifacts from S3 |
-| 7 | List CodeBuild artifacts | cache miss | List and inspect downloaded zip files |
-| 8 | Clean old report caches | cache miss | Delete 3 oldest matching caches for branch |
-| 9 | Save report to cache | cache miss | `actions/cache/save` with key `{project}-{branch}-{sha}` |
-| 10 | Upload primary artifact | `!env.ACT` | `actions/upload-artifact` for `{project}.zip` |
-| 11 | Upload evaluation artifact | `!env.ACT` | `actions/upload-artifact` for `evaluation.zip` |
-| 12 | Upload trend artifact | `!env.ACT` | `actions/upload-artifact` for `trend.zip` |
-| 13 | Upload artifacts to release | triggered from a `v*` tag | Attach build artifacts to GitHub Release (draft or published) |
+| 1    | List caches                  | *(always)*                | `gh cache list` for existing project caches                   |
+| 2    | Check cache                  | *(always)*                | `actions/cache/restore` with `lookup-only: true`              |
+| 3    | Configure AWS credentials    | cache miss                | `aws-actions/configure-aws-credentials` (OIDC)                |
+| 4    | Run CodeBuild                | cache miss                | `aws-actions/aws-codebuild-run-build` with inline buildspec   |
+| 5    | Build ID                     | cache miss (always)       | Echo CodeBuild build ID                                       |
+| 6    | Download CodeBuild artifacts | cache miss                | Download primary + secondary artifacts from S3                |
+| 7    | List CodeBuild artifacts     | cache miss                | List and inspect downloaded zip files                         |
+| 8    | Clean old report caches      | cache miss                | Delete 3 oldest matching caches for branch                    |
+| 9    | Save report to cache         | cache miss                | `actions/cache/save` with key `{project}-{branch}-{sha}`      |
+| 10   | Upload primary artifact      | `!env.ACT`                | `actions/upload-artifact` for `{project}.zip`                 |
+| 11   | Upload evaluation artifact   | `!env.ACT`                | `actions/upload-artifact` for `evaluation.zip`                |
+| 12   | Upload trend artifact        | `!env.ACT`                | `actions/upload-artifact` for `trend.zip`                     |
+| 13   | Upload artifacts to release  | triggered from a `v*` tag | Attach build artifacts to GitHub Release (draft or published) |
 
 **Caching strategy:** The cache key `{project}-{branch}-{sha}` ensures that the same commit on the same branch is never built twice. On cache hit, steps 3–9 are skipped entirely.
 
@@ -268,35 +268,35 @@ This job runs when the `codebuild` label is applied, immediately removing the re
 
 **External actions (all SHA-pinned):**
 
-| Action | Version | SHA |
+| Action                                  | Version | SHA                                        |
 | --------------------------------------- | ------- | ------------------------------------------ |
-| `actions/cache/restore` | v5.0.3 | `cdf6c1fa76f9f475f3d7449005a359c84ca0f306` |
-| `aws-actions/configure-aws-credentials` | v6.0.0 | `8df5847569e6427dd6c4fb1cf565c83acfa8afa7` |
-| `aws-actions/aws-codebuild-run-build` | v1.0.18 | `d8279f349f3b1b84e834c30e47c20dcb8888b7e5` |
-| `actions/cache/save` | v5.0.3 | `cdf6c1fa76f9f475f3d7449005a359c84ca0f306` |
-| `actions/upload-artifact` | v6.0.0 | `b7c566a772e6b6bfb58ed0dc250532a479d7789f` |
+| `actions/cache/restore`                 | v5.0.3  | `cdf6c1fa76f9f475f3d7449005a359c84ca0f306` |
+| `aws-actions/configure-aws-credentials` | v6.0.0  | `8df5847569e6427dd6c4fb1cf565c83acfa8afa7` |
+| `aws-actions/aws-codebuild-run-build`   | v1.0.18 | `d8279f349f3b1b84e834c30e47c20dcb8888b7e5` |
+| `actions/cache/save`                    | v5.0.3  | `cdf6c1fa76f9f475f3d7449005a359c84ca0f306` |
+| `actions/upload-artifact`               | v6.0.0  | `b7c566a772e6b6bfb58ed0dc250532a479d7789f` |
 
 ---
 
 ### Release Workflow (`release.yml`)
 
-| Property | Value |
+| Property        | Value                                                                                                                 |
 | --------------- | --------------------------------------------------------------------------------------------------------------------- |
-| **File** | `.github/workflows/release.yml` |
-| **Triggers** | `workflow_dispatch` (dispatched by `tag-on-merge.yml`), `push` on tags matching `v*` (fallback for manual tag pushes) |
-| **Environment** | *(none)* |
-| **Runner** | `ubuntu-latest` |
+| **File**        | `.github/workflows/release.yml`                                                                                       |
+| **Triggers**    | `workflow_dispatch` (dispatched by `tag-on-merge.yml`), `push` on tags matching `v*` (fallback for manual tag pushes) |
+| **Environment** | *(none)*                                                                                                              |
+| **Runner**      | `ubuntu-latest`                                                                                                       |
 
 **Purpose:** Creates a **draft** GitHub Release with a zip of `aidlc-rules/` when dispatched or when a version tag is pushed. The release is kept as a draft so that CodeBuild artifacts can be attached and reviewed before publishing.
 
 **Job: `release` ("Create Release")**
 
-| Step | Name | Condition | Action |
+| Step | Name                    | Condition         | Action                                                                                                                                              |
 | ---- | ----------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1 | Checkout code | *(always)* | `actions/checkout` with `fetch-depth: 0` |
-| 2 | Extract version | *(always)* | Guard: if `GITHUB_REF` is not a `v*` tag, emit `::warning::` and skip remaining steps. Otherwise parse into `version` (no `v`) and `tag` (with `v`) |
-| 3 | Create release artifact | ref is a `v*` tag | `zip -r ai-dlc-rules-v{VERSION}.zip aidlc-rules/` |
-| 4 | Create GitHub Release | ref is a `v*` tag | `softprops/action-gh-release` with `draft: true` and zip attached |
+| 1    | Checkout code           | *(always)*        | `actions/checkout` with `fetch-depth: 0`                                                                                                            |
+| 2    | Extract version         | *(always)*        | Guard: if `GITHUB_REF` is not a `v*` tag, emit `::warning::` and skip remaining steps. Otherwise parse into `version` (no `v`) and `tag` (with `v`) |
+| 3    | Create release artifact | ref is a `v*` tag | `zip -r ai-dlc-rules-v{VERSION}.zip aidlc-rules/`                                                                                                   |
+| 4    | Create GitHub Release   | ref is a `v*` tag | `softprops/action-gh-release` with `draft: true` and zip attached                                                                                   |
 
 **Graceful skip:** If dispatched from a branch instead of a tag (e.g., someone manually runs the workflow from `main`), the job completes successfully with a warning annotation rather than failing. This prevents confusing red X failures in the Actions UI.
 
@@ -304,22 +304,22 @@ This job runs when the `codebuild` label is applied, immediately removing the re
 
 **External actions (SHA-pinned):**
 
-| Action | Version | SHA |
+| Action                        | Version | SHA                                        |
 | ----------------------------- | ------- | ------------------------------------------ |
-| `actions/checkout` | v6.0.1 | `8e8c483db84b4bee98b60c0593521ed34d9990e8` |
-| `softprops/action-gh-release` | v2.5.0 | `a06a81a03ee405af7f2048a818ed3f03bbf83c7b` |
+| `actions/checkout`            | v6.0.1  | `8e8c483db84b4bee98b60c0593521ed34d9990e8` |
+| `softprops/action-gh-release` | v2.5.0  | `a06a81a03ee405af7f2048a818ed3f03bbf83c7b` |
 
 ---
 
 ### Pull Request Validation Workflow (`pull-request-lint.yml`)
 
-| Property | Value |
-| --------------- | ------------------------------------------------------------------------------------------------ |
-| **File** | `.github/workflows/pull-request-lint.yml` |
-| **Triggers** | `pull_request_target` to `main` (edited, labeled, opened, ready_for_review, reopened, synchronize, unlabeled); `merge_group` (checks_requested) |
-| **Environment** | *(none)* |
-| **Runner** | `ubuntu-latest` |
-| **Concurrency** | Groups by `{workflow}-{ref}`, cancels in-progress |
+| Property        | Value                                                                                                                                           |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| **File**        | `.github/workflows/pull-request-lint.yml`                                                                                                       |
+| **Triggers**    | `pull_request_target` to `main` (edited, labeled, opened, ready_for_review, reopened, synchronize, unlabeled); `merge_group` (checks_requested) |
+| **Environment** | *(none)*                                                                                                                                        |
+| **Runner**      | `ubuntu-latest`                                                                                                                                 |
+| **Concurrency** | Groups by `{workflow}-{ref}`, cancels in-progress                                                                                               |
 
 **Purpose:** Validates pull requests before merge. Enforces conventional commit PR titles, the contributor acknowledgment statement, merge-halt controls, and a do-not-merge label gate. Also runs as a merge queue check.
 
@@ -327,9 +327,9 @@ This job runs when the `codebuild` label is applied, immediately removing the re
 
 **Job: `get-pr-info`**
 
-| Step | Name | Action |
+| Step | Name        | Action                                                                                                   |
 | ---- | ----------- | -------------------------------------------------------------------------------------------------------- |
-| 1 | Get PR info | Extract PR number and labels from event context (`pull_request_target`) or by API lookup (`merge_group`) |
+| 1    | Get PR info | Extract PR number and labels from event context (`pull_request_target`) or by API lookup (`merge_group`) |
 
 Outputs `pr_number` and `pr_labels` for downstream jobs. For `merge_group` events, the PR number is extracted from the ref name and labels are fetched via the GitHub API. For `pull_request_target` events, values come directly from the event payload.
 
@@ -337,12 +337,12 @@ Outputs `pr_number` and `pr_labels` for downstream jobs. For `merge_group` event
 
 Depends on `get-pr-info`. Runs `if: always()` so it executes even if the upstream job fails.
 
-| Check | Behavior |
+| Check                | Behavior                                                                      |
 | -------------------- | ----------------------------------------------------------------------------- |
-| Open release PRs | Blocks merge if other `release/` PRs are open (prevents concurrent releases) |
-| `HALT_MERGES = 0` | All merges allowed (default) |
-| `HALT_MERGES = -N` | All merges blocked |
-| `HALT_MERGES = N` | Only PR #N is allowed to merge |
+| Open release PRs     | Blocks merge if other `release/` PRs are open (prevents concurrent releases)  |
+| `HALT_MERGES = 0`    | All merges allowed (default)                                                  |
+| `HALT_MERGES = -N`   | All merges blocked                                                            |
+| `HALT_MERGES = N`    | Only PR #N is allowed to merge                                                |
 
 **Job: `fail-by-label` ("Fail by Label")**
 
@@ -362,16 +362,16 @@ Only runs for `pull_request` and `pull_request_target` events. Skipped for bot a
 
 **External actions (SHA-pinned):**
 
-| Action | Version | SHA |
+| Action                                  | Version | SHA                                        |
 | --------------------------------------- | ------- | ------------------------------------------ |
-| `amannn/action-semantic-pull-request` | v6.1.1 | `48f256284bd46cdaab1048c3721360e808335d50` |
-| `actions/github-script` | v8.0.0 | `ed597411d8f924073f98dfc5c65a23a2325f34cd` |
+| `amannn/action-semantic-pull-request`   | v6.1.1  | `48f256284bd46cdaab1048c3721360e808335d50` |
+| `actions/github-script`                 | v8.0.0  | `ed597411d8f924073f98dfc5c65a23a2325f34cd` |
 
 ---
 
 ## Protected Environments
 
-| Environment | Used By | Purpose |
+| Environment | Used By                     | Purpose                                       |
 | ----------- | --------------------------- | --------------------------------------------- |
 | `codebuild` | `codebuild.yml` job `build` | Gates access to AWS credentials for CodeBuild |
 
@@ -388,22 +388,22 @@ Environment protection rules (configured in GitHub repository settings) may incl
 
 ### Secrets
 
-| Secret | Scope | Used By | Purpose |
-| ------------------------ | --------------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `AWS_CODEBUILD_ROLE_ARN` | Environment (`codebuild`) | `codebuild.yml` | IAM Role ARN for OIDC-based AWS STS role assumption |
-| `GITHUB_TOKEN` | Automatic (GitHub-provided) | `release.yml`, `release-pr.yml`, `tag-on-merge.yml`, `pull-request-lint.yml` | Authenticate GitHub API calls (release creation, PR creation, tag creation, workflow dispatch, PR validation) |
+| Secret                   | Scope                       | Used By                                                                      | Purpose                                                                                                       |
+| ------------------------ | --------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `AWS_CODEBUILD_ROLE_ARN` | Environment (`codebuild`)   | `codebuild.yml`                                                              | IAM Role ARN for OIDC-based AWS STS role assumption                                                           |
+| `GITHUB_TOKEN`           | Automatic (GitHub-provided) | `release.yml`, `release-pr.yml`, `tag-on-merge.yml`, `pull-request-lint.yml` | Authenticate GitHub API calls (release creation, PR creation, tag creation, workflow dispatch, PR validation) |
 
 The `codebuild.yml` workflow also uses `github.token` (the automatic token, accessed without the `secrets.` prefix) for cache management and release asset uploads.
 
 ### Repository Variables
 
-| Variable | Used By | Default Fallback | Purpose |
+| Variable                  | Used By                 | Default Fallback    | Purpose                                                          |
 | ------------------------- | ----------------------- | ------------------- | ---------------------------------------------------------------- |
-| `CODEBUILD_PROJECT_NAME` | `codebuild.yml` | `codebuild-project` | AWS CodeBuild project name |
-| `AWS_REGION` | `codebuild.yml` | `us-east-1` | AWS region for CodeBuild and STS |
-| `ROLE_DURATION_SECONDS` | `codebuild.yml` | `7200` | STS session duration (seconds) |
-| `DO_NOT_MERGE_LABEL` | `pull-request-lint.yml` | `do-not-merge` | Label name that blocks PR merging |
-| `HALT_MERGES` | `pull-request-lint.yml` | `0` | Merge gate: `0` = allow all, `-N` = block all, `N` = only PR #N |
+| `CODEBUILD_PROJECT_NAME`  | `codebuild.yml`         | `codebuild-project` | AWS CodeBuild project name                                       |
+| `AWS_REGION`              | `codebuild.yml`         | `us-east-1`         | AWS region for CodeBuild and STS                                 |
+| `ROLE_DURATION_SECONDS`   | `codebuild.yml`         | `7200`              | STS session duration (seconds)                                   |
+| `DO_NOT_MERGE_LABEL`      | `pull-request-lint.yml` | `do-not-merge`      | Label name that blocks PR merging                                |
+| `HALT_MERGES`             | `pull-request-lint.yml` | `0`                 | Merge gate: `0` = allow all, `-N` = block all, `N` = only PR #N  |
 
 All variables have sensible defaults via `${{ vars.VAR || 'default' }}` syntax, so workflows run even without explicit variable configuration.
 
@@ -413,25 +413,25 @@ All variables have sensible defaults via `${{ vars.VAR || 'default' }}` syntax, 
 
 ### Workflow-level permissions
 
-| Workflow | Permissions |
+| Workflow                | Permissions                               |
 | ----------------------- | ----------------------------------------- |
-| `codebuild.yml` | All 16 scopes explicitly set to `none` |
-| `pull-request-lint.yml` | All 16 scopes explicitly set to `none` |
-| `release.yml` | `contents: write` |
-| `release-pr.yml` | `contents: write`, `pull-requests: write` |
-| `tag-on-merge.yml` | `contents: write`, `actions: write` |
+| `codebuild.yml`         | All 16 scopes explicitly set to `none`    |
+| `pull-request-lint.yml` | All 16 scopes explicitly set to `none`    |
+| `release.yml`           | `contents: write`                         |
+| `release-pr.yml`        | `contents: write`, `pull-requests: write` |
+| `tag-on-merge.yml`      | `contents: write`, `actions: write`       |
 
 ### Job-level permissions (overrides)
 
-| Workflow | Job | Permissions | Rationale |
+| Workflow                | Job                    | Permissions                                            | Rationale                                                      |
 | ----------------------- | ---------------------- | ------------------------------------------------------ | -------------------------------------------------------------- |
-| `codebuild.yml` | `label-reminder` | `pull-requests: write` | Post reminder comment when `codebuild` label is missing |
-| `codebuild.yml` | `label-cleanup` | `pull-requests: write` | Delete reminder comment when `codebuild` label is applied |
-| `codebuild.yml` | `build` | `actions: write`, `contents: write`, `id-token: write` | Cache management, release asset upload, OIDC token for AWS STS |
-| `pull-request-lint.yml` | `get-pr-info` | `contents: read`, `pull-requests: read` | Read PR metadata and labels via API |
-| `pull-request-lint.yml` | `check-merge-status` | `pull-requests: read` | Read PR state for merge gate checks |
-| `pull-request-lint.yml` | `validate` | `pull-requests: read` | Read PR title for conventional commit validation |
-| `pull-request-lint.yml` | `contributorStatement` | `pull-requests: read` | Read PR body for contributor acknowledgment |
+| `codebuild.yml`         | `label-reminder`       | `pull-requests: write`                                 | Post reminder comment when `codebuild` label is missing        |
+| `codebuild.yml`         | `label-cleanup`        | `pull-requests: write`                                 | Delete reminder comment when `codebuild` label is applied      |
+| `codebuild.yml`         | `build`                | `actions: write`, `contents: write`, `id-token: write` | Cache management, release asset upload, OIDC token for AWS STS |
+| `pull-request-lint.yml` | `get-pr-info`          | `contents: read`, `pull-requests: read`                | Read PR metadata and labels via API                            |
+| `pull-request-lint.yml` | `check-merge-status`   | `pull-requests: read`                                  | Read PR state for merge gate checks                            |
+| `pull-request-lint.yml` | `validate`             | `pull-requests: read`                                  | Read PR title for conventional commit validation               |
+| `pull-request-lint.yml` | `contributorStatement` | `pull-requests: read`                                  | Read PR body for contributor acknowledgment                    |
 
 Both `codebuild.yml` and `pull-request-lint.yml` follow a **deny-all-then-grant** pattern: every permission scope is set to `none` at the workflow level, then only the required scopes are granted at the job level. This is the strictest possible configuration and prevents privilege escalation from compromised steps.
 
@@ -439,18 +439,18 @@ Both `codebuild.yml` and `pull-request-lint.yml` follow a **deny-all-then-grant*
 
 ## Security Posture
 
-| Control | Implementation |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Supply-chain protection** | All external actions pinned to full commit SHAs (not mutable version tags) |
-| **AWS authentication** | OIDC-based role assumption via `id-token: write` — no static credentials stored |
-| **Least-privilege tokens** | `codebuild.yml` and `pull-request-lint.yml` explicitly deny all 16 permission scopes at workflow level, grant only required scopes at job level |
-| **Environment protection** | `codebuild` environment gates AWS credential access with potential reviewer/branch rules |
-| **Label-gated CI** | `codebuild.yml` requires the `codebuild` label on PRs and only triggers for `aidlc-rules/**` changes, preventing unnecessary builds and environment approval prompts |
-| **Concurrency control** | `codebuild.yml` and `pull-request-lint.yml` cancel in-progress runs for the same branch |
-| **Safe PR trigger** | `pull-request-lint.yml` uses `pull_request_target` but never checks out PR code — only inspects metadata (title, labels, body) |
-| **Injection-safe inputs** | Zero `${{ }}` expression interpolation in `run:` blocks — all dynamic values (`github.ref_name`, `github.repository`, `env.*`, event inputs) passed via step-level `env:` or auto-exported workflow `env:` variables |
-| **Code ownership** | `.github/` (including workflows) owned exclusively by `@awslabs/aidlc-admins` via CODEOWNERS |
-| **Account masking** | `mask-aws-account-id: true` in AWS credential configuration |
+| Control                     | Implementation                                                                                                                                                                                                       |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Supply-chain protection** | All external actions pinned to full commit SHAs (not mutable version tags)                                                                                                                                           |
+| **AWS authentication**      | OIDC-based role assumption via `id-token: write` — no static credentials stored                                                                                                                                      |
+| **Least-privilege tokens**  | `codebuild.yml` and `pull-request-lint.yml` explicitly deny all 16 permission scopes at workflow level, grant only required scopes at job level                                                                      |
+| **Environment protection**  | `codebuild` environment gates AWS credential access with potential reviewer/branch rules                                                                                                                             |
+| **Label-gated CI**          | `codebuild.yml` requires the `codebuild` label on PRs and only triggers for `aidlc-rules/**` changes, preventing unnecessary builds and environment approval prompts                                                 |
+| **Concurrency control**     | `codebuild.yml` and `pull-request-lint.yml` cancel in-progress runs for the same branch                                                                                                                              |
+| **Safe PR trigger**         | `pull-request-lint.yml` uses `pull_request_target` but never checks out PR code — only inspects metadata (title, labels, body)                                                                                       |
+| **Injection-safe inputs**   | Zero `${{ }}` expression interpolation in `run:` blocks — all dynamic values (`github.ref_name`, `github.repository`, `env.*`, event inputs) passed via step-level `env:` or auto-exported workflow `env:` variables |
+| **Code ownership**          | `.github/` (including workflows) owned exclusively by `@awslabs/aidlc-admins` via CODEOWNERS                                                                                                                         |
+| **Account masking**         | `mask-aws-account-id: true` in AWS credential configuration                                                                                                                                                          |
 
 ---
 
@@ -458,15 +458,15 @@ Both `codebuild.yml` and `pull-request-lint.yml` follow a **deny-all-then-grant*
 
 Defined in `.github/CODEOWNERS`:
 
-| Path | Owners |
+| Path                                          | Owners                                                                        |
 | --------------------------------------------- | ----------------------------------------------------------------------------- |
-| `*` (default) | `@awslabs/aidlc-admins` `@awslabs/aidlc-maintainers` |
-| `.github/` | `@awslabs/aidlc-admins` |
-| `.github/CODEOWNERS` | `@awslabs/aidlc-admins` |
-| `aidlc-rules/` | `@awslabs/aidlc-admins` `@awslabs/aidlc-maintainers` `@awslabs/aidlc-writers` |
-| `assets/` | `@awslabs/aidlc-admins` `@awslabs/aidlc-maintainers` `@awslabs/aidlc-writers` |
-| `scripts/` | `@awslabs/aidlc-admins` `@awslabs/aidlc-maintainers` |
-| `CHANGELOG.md`, `cliff.toml`, `LICENSE`, etc. | `@awslabs/aidlc-admins` |
+| `*` (default)                                 | `@awslabs/aidlc-admins` `@awslabs/aidlc-maintainers`                          |
+| `.github/`                                    | `@awslabs/aidlc-admins`                                                       |
+| `.github/CODEOWNERS`                          | `@awslabs/aidlc-admins`                                                       |
+| `aidlc-rules/`                                | `@awslabs/aidlc-admins` `@awslabs/aidlc-maintainers` `@awslabs/aidlc-writers` |
+| `assets/`                                     | `@awslabs/aidlc-admins` `@awslabs/aidlc-maintainers` `@awslabs/aidlc-writers` |
+| `scripts/`                                    | `@awslabs/aidlc-admins` `@awslabs/aidlc-maintainers`                          |
+| `CHANGELOG.md`, `cliff.toml`, `LICENSE`, etc. | `@awslabs/aidlc-admins`                                                       |
 
 **Key implication:** Only `@awslabs/aidlc-admins` can approve changes to `.github/` (workflows, CODEOWNERS, issue templates).
 
@@ -507,30 +507,30 @@ Releases follow a **changelog-first** flow: the CHANGELOG is updated *before* th
 
 Defined in `cliff.toml` (used by `release-pr.yml`):
 
-| Setting | Value |
+| Setting           | Value                                                 |
 | ----------------- | ----------------------------------------------------- |
 | **Commit format** | Conventional commits (`feat:`, `fix:`, `docs:`, etc.) |
-| **Tag pattern** | `v[0-9].*` |
-| **Sort order** | Oldest first |
+| **Tag pattern**   | `v[0-9].*`                                            |
+| **Sort order**    | Oldest first                                          |
 
 **Commit groups:**
 
-| Prefix | Group Name |
+| Prefix     | Group Name    |
 | ---------- | ------------- |
-| `feat` | Features |
-| `fix` | Bug Fixes |
-| `docs` | Documentation |
-| `perf` | Performance |
-| `refactor` | Refactoring |
-| `style` | Style |
-| `test` | Tests |
-| `build` | CI/CD |
-| `ci` | CI/CD |
-| `chore` | Miscellaneous |
+| `feat`     | Features      |
+| `fix`      | Bug Fixes     |
+| `docs`     | Documentation |
+| `perf`     | Performance   |
+| `refactor` | Refactoring   |
+| `style`    | Style         |
+| `test`     | Tests         |
+| `build`    | CI/CD         |
+| `ci`       | CI/CD         |
+| `chore`    | Miscellaneous |
 
 **Filtered commits:**
 
-| Pattern | Action |
+| Pattern                  | Action                                     |
 | ------------------------ | ------------------------------------------ |
 | `docs: update changelog` | Skipped (noise from previous release flow) |
 
@@ -538,9 +538,9 @@ Unconventional commits are filtered out (`filter_unconventional = true`).
 
 **Version bump rules** (defined in `[bump]` section):
 
-| Rule | Effect |
+| Rule                                | Effect                                        |
 | ----------------------------------- | --------------------------------------------- |
-| `features_always_bump_minor = true` | `feat:` commits trigger a minor version bump |
+| `features_always_bump_minor = true` | `feat:` commits trigger a minor version bump  |
 | `breaking_always_bump_major = true` | Breaking changes trigger a major version bump |
 
 These rules are used by `git-cliff --bumped-version` when auto-determining the next version in `release-pr.yml`.

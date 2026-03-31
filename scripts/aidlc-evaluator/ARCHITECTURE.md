@@ -60,16 +60,16 @@ The framework validates changes to the [AI-DLC workflows](https://github.com/aws
 
 The project uses a **uv workspace** (defined in the root `pyproject.toml`) with eight internal packages. Each package is independently structured with its own `pyproject.toml`, `src/` layout, and `tests/` directory.
 
-| Package | PyPI Name | Purpose |
-| --------- | ----------- | --------- |
-| `packages/execution` | `aidlc-runner` | Two-agent swarm that runs the AIDLC workflow |
-| `packages/qualitative` | `aidlc-qualitative` | Semantic scoring of documents vs golden baseline |
-| `packages/quantitative` | `aidlc-quantitative` | Static analysis: linting, security, duplication |
-| `packages/contracttest` | `aidlc-contracttest` | API contract testing against OpenAPI specs |
-| `packages/nonfunctional` | `aidlc-nonfunctional` | NFR evaluation (tokens, timing, consistency) |
-| `packages/reporting` | `aidlc-reporting` | Consolidated report generation (Markdown + HTML) |
-| `packages/ide-harness` | (not published) | IDE adapter framework for third-party AI assistants |
-| `packages/shared` | `aidlc-shared` | Common utilities shared across packages |
+| Package                  | PyPI Name             | Purpose                                             |
+| ------------------------ | --------------------- | --------------------------------------------------- |
+| `packages/execution`     | `aidlc-runner`        | Two-agent swarm that runs the AIDLC workflow        |
+| `packages/qualitative`   | `aidlc-qualitative`   | Semantic scoring of documents vs golden baseline    |
+| `packages/quantitative`  | `aidlc-quantitative`  | Static analysis: linting, security, duplication     |
+| `packages/contracttest`  | `aidlc-contracttest`  | API contract testing against OpenAPI specs          |
+| `packages/nonfunctional` | `aidlc-nonfunctional` | NFR evaluation (tokens, timing, consistency)        |
+| `packages/reporting`     | `aidlc-reporting`     | Consolidated report generation (Markdown + HTML)    |
+| `packages/ide-harness`   | (not published)       | IDE adapter framework for third-party AI assistants |
+| `packages/shared`        | `aidlc-shared`        | Common utilities shared across packages             |
 
 **Dependency graph** (simplified):
 
@@ -171,21 +171,21 @@ This is the core of the framework. It uses the **Strands SDK** multi-agent orche
 
 The Executor drives this sequence (some stages are conditional based on project scope):
 
-| # | Stage | Phase | Conditional? |
-| --- | ------- | ------- | ------------- |
-| 1 | Workspace Detection | Inception | Always |
-| 2 | Reverse Engineering | Inception | Brownfield only |
-| 3 | Requirements Analysis | Inception | Always |
-| 4 | User Stories | Inception | If complex |
-| 5 | Workflow Planning | Inception | Always |
-| 6 | Application Design | Inception | If needed |
-| 7 | Units Generation | Inception | If needed |
-| 8 | Functional Design | Construction | If needed |
-| 9 | NFR Requirements | Construction | If needed |
-| 10 | NFR Design | Construction | If needed |
-| 11 | Infrastructure Design | Construction | If needed |
-| 12 | Code Generation | Construction | Always |
-| 13 | Build and Test | Construction | Always |
+| #   | Stage                 | Phase        | Conditional?    |
+| --- | --------------------- | ------------ | --------------- |
+| 1   | Workspace Detection   | Inception    | Always          |
+| 2   | Reverse Engineering   | Inception    | Brownfield only |
+| 3   | Requirements Analysis | Inception    | Always          |
+| 4   | User Stories          | Inception    | If complex      |
+| 5   | Workflow Planning     | Inception    | Always          |
+| 6   | Application Design    | Inception    | If needed       |
+| 7   | Units Generation      | Inception    | If needed       |
+| 8   | Functional Design     | Construction | If needed       |
+| 9   | NFR Requirements      | Construction | If needed       |
+| 10  | NFR Design            | Construction | If needed       |
+| 11  | Infrastructure Design | Construction | If needed       |
+| 12  | Code Generation       | Construction | Always          |
+| 13  | Build and Test        | Construction | Always          |
 
 Each stage loads its corresponding rule file (e.g., `inception/requirements-analysis.md`) before execution. The Executor writes all documentation artifacts to `aidlc-docs/` and all generated code to `workspace/`.
 
@@ -234,10 +234,10 @@ Runs static analysis tools against the generated code in `workspace/`. The analy
 
 #### Tool Selection by Project Type
 
-| Project Type | Linter | Security Scanner | Duplication |
-| ------------- | -------- | ----------------- | ------------- |
-| Python | ruff | bandit + semgrep | PMD CPD |
-| Node.js | eslint | npm audit + semgrep | PMD CPD |
+| Project Type  | Linter   | Security Scanner    | Duplication   |
+| ------------- | -------- | ------------------- | ------------- |
+| Python        | ruff     | bandit + semgrep    | PMD CPD       |
+| Node.js       | eslint   | npm audit + semgrep | PMD CPD       |
 
 #### Analysis Flow
 
@@ -313,11 +313,11 @@ Documents are paired by relative path. Internal workflow files (`aidlc-state.md`
 
 Each document pair is scored on three dimensions (0.0 to 1.0):
 
-| Dimension | Weight | What It Measures |
-| ----------- | -------- | ----------------- |
-| Intent Similarity | 0.4 | Same goals, requirements, and purpose |
-| Design Similarity | 0.4 | Same architecture, components, patterns |
-| Completeness | 0.2 | Candidate covers all reference topics |
+| Dimension         | Weight   | What It Measures                        |
+| ----------------- | -------- | --------------------------------------- |
+| Intent Similarity | 0.4      | Same goals, requirements, and purpose   |
+| Design Similarity | 0.4      | Same architecture, components, patterns |
+| Completeness      | 0.2      | Candidate covers all reference topics   |
 
 **Overall per-document** = 0.4 × intent + 0.4 × design + 0.2 × completeness
 
@@ -563,14 +563,14 @@ All LLM calls go through Amazon Bedrock via boto3. Configuration:
 
 ### 9.3 Static Analysis Tools
 
-| Tool | Purpose | Output Format | Graceful Degradation |
-| ------ | --------- | -------------- | --------------------- |
-| ruff | Python linting | JSON | Skipped if not on PATH |
-| bandit | Python security | JSON | Skipped if not on PATH |
-| semgrep | Multi-language security | JSON | Skipped if not on PATH |
-| eslint | JS/TS linting | JSON | Falls back to npx |
-| npm audit | JS dependency security | JSON | Needs package-lock.json |
-| PMD CPD | Code duplication | XML | Configurable path or PATH scan |
+| Tool      | Purpose                 | Output Format  | Graceful Degradation           |
+| --------- | ----------------------- | -------------- | ------------------------------ |
+| ruff      | Python linting          | JSON           | Skipped if not on PATH         |
+| bandit    | Python security         | JSON           | Skipped if not on PATH         |
+| semgrep   | Multi-language security | JSON           | Skipped if not on PATH         |
+| eslint    | JS/TS linting           | JSON           | Falls back to npx              |
+| npm audit | JS dependency security  | JSON           | Needs package-lock.json        |
+| PMD CPD   | Code duplication        | XML            | Configurable path or PATH scan |
 
 ---
 
@@ -657,16 +657,16 @@ The default test case is `sci-calc` (a scientific calculator API). All CLI defau
 
 ## 13. Dependency Stack
 
-| Component | Technology |
-| ----------- | ----------- |
-| Language | Python 3.13+ |
-| Package manager | uv (workspace mode) |
-| AI orchestration | Strands Agents SDK |
-| LLM provider | Amazon Bedrock (boto3) |
-| HTTP client | httpx (contract tests) |
-| ASGI server | uvicorn (contract tests) |
-| Test framework | pytest |
-| Serialization | PyYAML |
-| Linting | ruff |
-| Security scanning | bandit, semgrep |
-| Duplication detection | PMD CPD (external) |
+| Component             | Technology               |
+| --------------------- | ------------------------ |
+| Language              | Python 3.13+             |
+| Package manager       | uv (workspace mode)      |
+| AI orchestration      | Strands Agents SDK       |
+| LLM provider          | Amazon Bedrock (boto3)   |
+| HTTP client           | httpx (contract tests)   |
+| ASGI server           | uvicorn (contract tests) |
+| Test framework        | pytest                   |
+| Serialization         | PyYAML                   |
+| Linting               | ruff                     |
+| Security scanning     | bandit, semgrep          |
+| Duplication detection | PMD CPD (external)       |

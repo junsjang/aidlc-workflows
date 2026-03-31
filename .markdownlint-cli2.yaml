@@ -42,7 +42,8 @@ config:
   MD031: false  # blanks-around-fences (31 violations in aidlc-rules/)
 
   # --- Tier 4: Minimal prompt impact (table/URL formatting) ---
-  MD060: false  # table-column-style (34 violations in aidlc-rules/)
+  MD060:        # table-column-style — enforce aligned style globally
+    style: "aligned"
   # MD034/no-bare-urls — re-enabled (0 violations remain)
   # MD028/no-blanks-blockquote — re-enabled (0 violations remain)
 

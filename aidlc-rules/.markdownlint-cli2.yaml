@@ -1,0 +1,5 @@
+# Override: disable MD060/table-column-style in aidlc-rules/ until remediated
+# The parent config enforces "aligned" style; this directory is excluded
+# because these are LLM prompt files pending separate review.
+config:
+  MD060: false
