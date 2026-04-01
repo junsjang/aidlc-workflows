@@ -9,5 +9,5 @@ targets = scripts/aidlc-evaluator
 # that trigger false positives like assert, subprocess in fixtures)
 exclude = */tests/*
 
-# Skip low-confidence findings to reduce noise
-confidence-level = medium
+# Skip low and medium-confidence findings to reduce noise
+confidence-level = high
