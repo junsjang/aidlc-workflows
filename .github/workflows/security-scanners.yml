@@ -179,7 +179,7 @@ jobs:
         id: grype
         run: |
           set +e
-          grype --output sarif . | tee grype-report_sarif.json
+          grype --config .grype.yaml --output sarif . | tee grype-report_sarif.json
           GRYPE_EXIT=${PIPESTATUS[0]}
           set -e
           echo "exit_code=$GRYPE_EXIT" >> "$GITHUB_OUTPUT"
