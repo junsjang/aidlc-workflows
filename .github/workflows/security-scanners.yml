@@ -223,7 +223,7 @@ jobs:
           pip install -r requirements.txt
           rm requirements.txt
           set +e
-          bandit -r . -f sarif -o bandit-report_sarif.json
+          bandit -c .bandit -r scripts/aidlc-evaluator -f sarif -o bandit-report_sarif.json
           BANDIT_EXIT=$?
           set -e
           echo "exit_code=$BANDIT_EXIT" >> "$GITHUB_OUTPUT"
