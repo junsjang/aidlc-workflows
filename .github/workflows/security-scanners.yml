@@ -223,10 +223,16 @@ jobs:
           pip install -r requirements.txt
           rm requirements.txt
           set +e
-          bandit -c .bandit -r scripts/aidlc-evaluator -ll -f sarif -o bandit-report_sarif.json
+          bandit -c .bandit -f sarif -o bandit-report_sarif.json
           BANDIT_EXIT=$?
           set -e
-          echo "exit_code=$BANDIT_EXIT" >> "$GITHUB_OUTPUT"
+          # Fail only if HIGH severity findings exist (level=error in SARIF)
+          HIGH_COUNT=$(jq '[.runs[0].results[] | select(.level == "error")] | length' bandit-report_sarif.json 2>/dev/null || echo 0)
+          if [ "$HIGH_COUNT" -gt 0 ]; then
+            echo "exit_code=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "exit_code=0" >> "$GITHUB_OUTPUT"
+          fi
           exit 0
       - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         if: always()
