@@ -67,9 +67,9 @@ All scanners except ClamAV use a **deferred-failure pattern**: the scan always r
 
 **What it detects:** Common security issues in Python code (e.g., use of `subprocess`, `eval`, hardcoded passwords, weak crypto).
 
-**What triggers failure:** Any finding with **high confidence**, at any severity level. Low and medium-confidence findings are filtered out (see `.bandit`).
+**What triggers failure:** Any finding with **high confidence**, at any severity level. See the Bandit configuration in [`.github/workflows/security-scanners.yml`](../.github/workflows/security-scanners.yml) for the exact filters used.
 
-**Scope:** Only scans `scripts/aidlc-evaluator`, excluding `*/tests/*`.
+**Scope:** Runs against all tracked Python files in the repository; see [`.github/workflows/security-scanners.yml`](../.github/workflows/security-scanners.yml) for the precise include/exclude patterns.
 
 **How to review findings:**
 
