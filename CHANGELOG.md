@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.5.14] - 2026-07-26
+
+AI-DLC now ships a sixth harness: **Cursor** (`dist/cursor/`), serving the Cursor IDE and the Cursor CLI (`agent`) from one tree. Copy `dist/cursor/` into your project and run `/aidlc` (IDE chat) or `agent -p "/aidlc ..."` (headless CLI). Live-verified against cursor-agent 2026.07 on Linux; setup and caveats in `docs/guide/harnesses/cursor.md`.
+
+* New `dist/cursor/` distribution: engine + surfaces under `.cursor/` (skills, agents, rules, hooks, tools), `AGENTS.md` onboarding at the project root, and the neutral `aidlc/` workspace tree.
+* The 14 persona files in `.cursor/agents/` are live native subagents (the `task` tool targets them by name); they ship without model pins because Cursor model availability is plan-dependent (Free accounts can only use Auto).
+* Hooks ride `.cursor/hooks.json` through a new adapter (`.cursor/hooks/aidlc-cursor-adapter.ts`): the state-transition and reviewer read-scope guards block via Cursor's `permission: deny` channel; the Stop-hook forwarding nudge is advisory (`followup_message`) because Cursor's stop hook cannot block; subagent identity for reviewer-scope enforcement is reconstructed from Task-spawn payloads.
+* The AI-DLC method reaches context via `.cursor/rules/aidlc.mdc` (alwaysApply read instruction; Cursor rules do not expand `@`-imports) plus sessionStart context injection; `/aidlc space <name>` re-points the rule in place.
+* `.cursor/cli.json` pre-approves `Shell(bun)` so engine calls do not prompt; everything else follows your Cursor approval settings.
+* `/aidlc --doctor` gains a Cursor arm (adapter, hooks.json, cli.json, method-rule checks).
+* Scripting trap documented: the Cursor CLI exits 0 on every outcome, including auth and plan errors - assert on output text, not the exit code.
+
 ## [2.5.11] - 2026-07-24
 
 Intent Capture now keeps generated intent and stakeholder claims grounded in the user's description, confirmed answers, workflow-selected scope, or explicitly registered memory. Unsupported content is omitted, elicited, or surfaced as a human-owned assumption instead of being presented as fact. **Upgrade:** re-copy your `dist/<harness>/` shell into the project so the updated stage, Product Lead reviewer contract, and `claim-sources` sensor are installed.
